@@ -30,6 +30,11 @@ hdiutil attach -quiet -noautoopen "$work/rw.dmg"
 
 osascript <<EOF
 tell application "Finder"
+  -- Finder can take a few seconds to notice a freshly attached disk.
+  repeat 30 times
+    if exists disk "$VOL" then exit repeat
+    delay 0.5
+  end repeat
   tell disk "$VOL"
     open
     set current view of container window to icon view
