@@ -1,7 +1,7 @@
 <div align="center">
   <img src="Resources/AppIcon-preview.png" width="128" alt="ไอคอน Boardshot">
   <h1>Boardshot</h1>
-  <p><strong>เก็บ screenshot ให้พ้น Desktop เรียกดูได้ด้วยคีย์ลัดเดียว</strong></p>
+  <p><strong>screenshot ล่าสุด เรียกใช้ได้ด้วยคีย์ลัดเดียว</strong></p>
 
   <a href="https://github.com/phukijnat/boardshot/releases/latest/download/Boardshot.dmg"><img src="https://img.shields.io/badge/Download_for_macOS-Boardshot.dmg-0A84FF?style=for-the-badge&logo=apple&logoColor=white" alt="ดาวน์โหลด Boardshot สำหรับ macOS" height="44"></a>
 
@@ -14,16 +14,16 @@
 
 <!-- TODO: ใส่ภาพหน้าจอหรือ GIF ของหน้าต่าง Boardshot: docs/screenshot.png -->
 
-กด `⌘⇧4` ทีไรไฟล์ก็ไปกองบน Desktop จนเต็มไปด้วย `Screenshot 2026-…png` Boardshot เป็นแอปเล็กๆ บนแถบเมนูที่ส่งภาพทั้งหมดไปไว้โฟลเดอร์เดียว แล้วให้หน้าต่างเล็กๆ ไว้หา ดูภาพ ลากไปใช้ หรือลบ ถ่ายจอแบบเดิมได้ทุกอย่าง
+ถ่ายจอแบบที่ทำอยู่ทุกวัน กด `⇧⌘Space` แล้วลากภาพไปวางใน Slack, Figma, แชต หรือ issue ได้เลย ไม่ต้องเปิด Finder หาไฟล์ Boardshot อยู่บนแถบเมนู เก็บทุกภาพไว้ในโฟลเดอร์เดียว และได้ Desktop ที่สะอาดเป็นของแถม
 
 > [!NOTE]
 > **Beta** Boardshot ยังใหม่และอยู่ระหว่างทดสอบ อาจมีบั๊กได้ เจออะไร[แจ้งได้ที่นี่](https://github.com/phukijnat/boardshot/issues/new/choose)
 
 ## ความสามารถ
 
+- **หน้าต่างเรียกใช้เร็ว** กด `⇧⌘Space` เห็นทุกภาพ ชี้เพื่อดูภาพใหญ่ ลากไปวางในแอปไหนก็ได้ คัดลอก หรือลบ
 - **คีย์ลัดเดิม Desktop สะอาด** `⌘⇧3`, `⌘⇧4` และ `⌘⇧5` บันทึกไปที่ `~/Pictures/Boardshot` แทน Desktop
 - **ไฟล์มาทันที** รูปเล็กมุมจอของระบบถูกแทนด้วยของ Boardshot ไฟล์จึงเข้าโฟลเดอร์ทันที
-- **หน้าต่างเรียกใช้เร็ว** กด `⇧⌘Space` เห็นทุกภาพ ชี้เพื่อดูภาพใหญ่ ลากไปวางในแอปไหนก็ได้ คัดลอก หรือลบ
 - **คืนค่าเดิมได้ทุกเมื่อ** แอปจำค่าเดิมของ Mac ไว้ และคืนให้ด้วยการเอาติ๊กออกช่องเดียว
 - **อัปเดตเอง** บอกเมื่อมีเวอร์ชันใหม่และติดตั้งให้
 - **เป็นส่วนตัว** ไม่ต้องสมัครบัญชี ไม่เก็บสถิติ ออกอินเทอร์เน็ตแค่ตอนเช็กอัปเดต
@@ -119,7 +119,7 @@ defaults delete com.apple.screencapture location; defaults delete com.apple.scre
 
 เจอบั๊กหรือมีไอเดีย [เปิด issue ได้เลย](https://github.com/phukijnat/boardshot/issues/new/choose) ส่ง Pull Request ได้เช่นกัน วิธี build และปล่อยเวอร์ชันดูใน [CONTRIBUTING.md](CONTRIBUTING.md)
 
-ถ้า Boardshot ช่วยให้ Desktop สะอาดขึ้น กด ⭐ ให้ repo จะช่วยให้คนอื่นเจอแอปนี้ง่ายขึ้น
+ถ้า Boardshot ทำให้ส่ง screenshot ได้ไวขึ้น กด ⭐ ให้ repo จะช่วยให้คนอื่นเจอแอปนี้ง่ายขึ้น
 
 ## ขอบคุณ
 

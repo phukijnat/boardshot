@@ -1,7 +1,7 @@
 <div align="center">
   <img src="Resources/AppIcon-preview.png" width="128" alt="Boardshot icon">
   <h1>Boardshot</h1>
-  <p><strong>Your Mac screenshots, off the Desktop and one shortcut away.</strong></p>
+  <p><strong>Your recent screenshots, one shortcut away.</strong></p>
 
   <a href="https://github.com/phukijnat/boardshot/releases/latest/download/Boardshot.dmg"><img src="https://img.shields.io/badge/Download_for_macOS-Boardshot.dmg-0A84FF?style=for-the-badge&logo=apple&logoColor=white" alt="Download Boardshot for macOS" height="44"></a>
 
@@ -14,16 +14,16 @@
 
 <!-- TODO: hero screenshot or GIF of the panel: docs/screenshot.png -->
 
-Every `⌘⇧4` lands on your Desktop, and the Desktop slowly turns into a pile of `Screenshot 2026-…png`. Boardshot is a small menu bar app that sends them to one folder instead and gives you a quick panel to find, preview, drag out or delete them. Keep taking screenshots exactly as you do now.
+Take a screenshot the way you always do, press `⇧⌘Space`, and drag it straight into Slack, Figma, a chat or an issue. No digging through Finder. Boardshot lives in your menu bar, keeps every shot in one folder, and keeps your Desktop clean as a bonus.
 
 > [!NOTE]
 > **Beta.** Boardshot is new and still being tested. Things may break. Please [report bugs or ideas](https://github.com/phukijnat/boardshot/issues/new/choose).
 
 ## Features
 
+- **Quick panel.** `⇧⌘Space` opens every shot: hover to preview, drag into any app, copy, or trash.
 - **Same shortcuts, tidy Desktop.** `⌘⇧3`, `⌘⇧4` and `⌘⇧5` save to `~/Pictures/Boardshot` instead of the Desktop.
 - **Instant files.** Boardshot's own corner thumbnail replaces the system one, so the file is saved right away.
-- **Quick panel.** `⇧⌘Space` opens every shot: hover to preview, drag into any app, copy, or trash.
 - **Undo anytime.** Your original screenshot settings are saved and put back with one checkbox.
 - **Updates itself.** Tells you when a new version is out and installs it.
 - **Private.** No account, no analytics. The only network request is the update check.
@@ -121,7 +121,7 @@ App name, bundle ID, version and update feed all live in [`config.sh`](config.sh
 
 Found a bug or have an idea? [Open an issue](https://github.com/phukijnat/boardshot/issues/new/choose). Pull requests are welcome too; [CONTRIBUTING.md](CONTRIBUTING.md) explains how the project is built and released.
 
-If Boardshot keeps your Desktop clean, a ⭐ on the repo helps other people find it.
+If Boardshot makes sharing screenshots feel instant, a ⭐ on the repo helps other people find it.
 
 ## Acknowledgements
 
