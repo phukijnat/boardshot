@@ -2,6 +2,10 @@
 
 `release.sh` turns the bullet list under each version into the release notes users see in the update window.
 
+## 0.2.0
+
+- New setting: turn off the larger preview that appears when you hover a shot (Settings → Panel).
+
 ## 0.1.2
 
 - The installer window has an **Open Anyway** shortcut that jumps straight to System Settings → Privacy & Security.
