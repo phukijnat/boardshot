@@ -4,6 +4,18 @@
     <title>Boardshot</title>
     <!-- ITEMS -->
     <item>
+      <title>0.1.1</title>
+      <pubDate>Tue, 17 Nov 2026 13:54:18 +0000</pubDate>
+      <sparkle:version>101</sparkle:version>
+      <sparkle:shortVersionString>0.1.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul>
+<li>The installer window now shows how to install and what to do the first time macOS blocks the app.</li>
+</ul>
+]]></description>
+      <enclosure url="https://github.com/phukijnat/boardshot/releases/download/v0.1.1/Boardshot-0.1.1.dmg" length="1442980" type="application/octet-stream" sparkle:edSignature="FQRD0TPjKuDfBdsNrsP6f5C/qzLHZmd1W1X3JRLV20BmZvclMnUwxdJgBuJOdT7bCbLqcYpkIBfzH77AxBTnBA=="/>
+    </item>
+    <item>
       <title>0.1.0</title>
       <pubDate>Tue, 17 Nov 2026 13:07:54 +0000</pubDate>
       <sparkle:version>100</sparkle:version>
