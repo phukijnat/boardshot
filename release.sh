@@ -37,6 +37,8 @@ else
 fi
 
 DMG="dist/${APP_NAME}-${NEW}.dmg"
+# Same file under a fixed name, so .../releases/latest/download/<APP_NAME>.dmg always works.
+[[ "$MODE" == "--local" ]] || cp "$DMG" "dist/${APP_NAME}.dmg"
 BUILD_NUM=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "build/${APP_NAME}.app/Contents/Info.plist")
 SIG=$(vendor/Sparkle/bin/sign_update --account boardshot -p "$DMG" | tr -d '[:space:]')
 LEN=$(stat -f %z "$DMG")
@@ -65,6 +67,8 @@ if [[ "$MODE" == "--local" ]]; then
 else
   echo "\nNext steps:"
   echo "  git commit -am \"Release ${NEW}\" && git tag v${NEW} && git push && git push --tags"
-  echo "  Create a GitHub release v${NEW} and attach ${DMG}"
+  echo "  Create a GitHub release v${NEW} and attach ${DMG} and dist/${APP_NAME}.dmg"
+  echo "  (${APP_NAME}.dmg is the same file under a fixed name, for the README's download button)"
+  echo "  Do NOT mark it as a pre-release: GitHub skips pre-releases for 'latest', which breaks the download button."
   echo "  (appcast.xml on main points to that file, so push both)"
 fi

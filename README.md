@@ -1,23 +1,37 @@
-# Boardshot
+<div align="center">
+  <img src="Resources/AppIcon-preview.png" width="128" alt="Boardshot icon">
+  <h1>Boardshot</h1>
+  <p><strong>Your Mac screenshots, off the Desktop and one shortcut away.</strong></p>
 
-A small menu bar app that keeps your Mac screenshots in one place: take a shot with the usual keys, then find, preview, drag out or delete it from a quick panel.
+  <a href="https://github.com/phukijnat/boardshot/releases/latest/download/Boardshot.dmg"><img src="https://img.shields.io/badge/Download_for_macOS-Boardshot.dmg-0A84FF?style=for-the-badge&logo=apple&logoColor=white" alt="Download Boardshot for macOS" height="44"></a>
 
-[ภาษาไทย](README.th.md)
+  [![Latest version](https://img.shields.io/github/v/release/phukijnat/boardshot?include_prereleases&label=version)](https://github.com/phukijnat/boardshot/releases)
+  ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-blue)
+  [![License: MIT](https://img.shields.io/github/license/phukijnat/boardshot)](LICENSE)
 
+  English · [ภาษาไทย](README.th.md)
+</div>
+
+<!-- TODO: hero screenshot or GIF of the panel: docs/screenshot.png -->
+
+Every `⌘⇧4` lands on your Desktop, and the Desktop slowly turns into a pile of `Screenshot 2026-…png`. Boardshot is a small menu bar app that sends them to one folder instead and gives you a quick panel to find, preview, drag out or delete them. Keep taking screenshots exactly as you do now.
+
+> [!NOTE]
 > **Beta.** Boardshot is new and still being tested. Things may break. Please [report bugs or ideas](https://github.com/phukijnat/boardshot/issues/new/choose).
 
-<!-- TODO: add a screenshot or GIF of the panel: docs/screenshot.png -->
+## Features
 
-- Screenshots taken with the usual shortcuts (`⌘⇧3`, `⌘⇧4`, `⌘⇧5`) go to `~/Pictures/Boardshot` instead of the Desktop.
-- The system's floating thumbnail is replaced by Boardshot's own, so the file is saved right away.
-- Built-in updates: the app tells you when a new version is out and installs it for you.
-- Thai and English UI.
-
-Requires macOS 14 or later, on Apple Silicon or Intel.
+- **Same shortcuts, tidy Desktop.** `⌘⇧3`, `⌘⇧4` and `⌘⇧5` save to `~/Pictures/Boardshot` instead of the Desktop.
+- **Instant files.** Boardshot's own corner thumbnail replaces the system one, so the file is saved right away.
+- **Quick panel.** `⇧⌘Space` opens every shot: hover to preview, drag into any app, copy, or trash.
+- **Undo anytime.** Your original screenshot settings are saved and put back with one checkbox.
+- **Updates itself.** Tells you when a new version is out and installs it.
+- **Private.** No account, no analytics. The only network request is the update check.
+- Thai and English UI. Universal app for Apple Silicon and Intel, macOS 14 or later.
 
 ## Install
 
-1. Download the newest `Boardshot-x.y.z.dmg` from [Releases](https://github.com/phukijnat/boardshot/releases).
+1. [Download **Boardshot.dmg**](https://github.com/phukijnat/boardshot/releases/latest/download/Boardshot.dmg) (always the newest version). Older versions are on the [Releases](https://github.com/phukijnat/boardshot/releases) page.
 2. Open it and drag **Boardshot** into **Applications**.
 3. Open Boardshot from Applications.
 
@@ -64,6 +78,20 @@ Open from the menu bar icon → **Settings…**, the **⋯** button in the panel
 
 To redirect screenshots, Boardshot changes two system settings (`com.apple.screencapture`: `location` and `show-thumbnail`). It remembers your original values and puts them back when you untick **Keep screenshots in Boardshot**. Quitting the app does not undo this.
 
+## FAQ
+
+**Does it move the screenshots already on my Desktop?**
+No. Only new screenshots go to `~/Pictures/Boardshot`. Move old ones there yourself if you want them in the panel.
+
+**I already save screenshots to a custom folder. What happens to that setting?**
+Boardshot remembers it and puts it back when you untick **Keep screenshots in Boardshot**.
+
+**Does Boardshot send anything over the internet?**
+Only the update check, which reads [`appcast.xml`](appcast.xml) from this repo. You can turn automatic checks off in Settings.
+
+**Why isn't it notarized?**
+Notarization needs a paid Apple developer account. The app is open source and you can [build it yourself](#build-from-source).
+
 ## Uninstall
 
 1. Settings… → untick **Keep screenshots in Boardshot**.
@@ -89,6 +117,16 @@ This downloads Sparkle (the update framework) into `vendor/`, builds a universal
 
 App name, bundle ID, version and update feed all live in [`config.sh`](config.sh). See [CONTRIBUTING.md](CONTRIBUTING.md) for how releases are made.
 
+## Feedback & contributing
+
+Found a bug or have an idea? [Open an issue](https://github.com/phukijnat/boardshot/issues/new/choose). Pull requests are welcome too; [CONTRIBUTING.md](CONTRIBUTING.md) explains how the project is built and released.
+
+If Boardshot keeps your Desktop clean, a ⭐ on the repo helps other people find it.
+
+## Acknowledgements
+
+- [Sparkle](https://sparkle-project.org) for in-app updates.
+
 ## License
 
-[MIT](LICENSE)
+Boardshot is free and open source under the [MIT License](LICENSE). © 2026 phukijnat

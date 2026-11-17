@@ -1,23 +1,37 @@
-# Boardshot
+<div align="center">
+  <img src="Resources/AppIcon-preview.png" width="128" alt="ไอคอน Boardshot">
+  <h1>Boardshot</h1>
+  <p><strong>เก็บ screenshot ให้พ้น Desktop เรียกดูได้ด้วยคีย์ลัดเดียว</strong></p>
 
-แอปเล็กๆ บนแถบเมนูของ Mac ที่เก็บ screenshot ไว้ที่เดียว ถ่ายด้วยคีย์ลัดเดิม แล้วหา ดูภาพ ลากไปใช้ หรือลบ ได้จากหน้าต่างเดียว
+  <a href="https://github.com/phukijnat/boardshot/releases/latest/download/Boardshot.dmg"><img src="https://img.shields.io/badge/Download_for_macOS-Boardshot.dmg-0A84FF?style=for-the-badge&logo=apple&logoColor=white" alt="ดาวน์โหลด Boardshot สำหรับ macOS" height="44"></a>
 
-[English](README.md)
+  [![Latest version](https://img.shields.io/github/v/release/phukijnat/boardshot?include_prereleases&label=version)](https://github.com/phukijnat/boardshot/releases)
+  ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-blue)
+  [![License: MIT](https://img.shields.io/github/license/phukijnat/boardshot)](LICENSE)
 
+  [English](README.md) · ภาษาไทย
+</div>
+
+<!-- TODO: ใส่ภาพหน้าจอหรือ GIF ของหน้าต่าง Boardshot: docs/screenshot.png -->
+
+กด `⌘⇧4` ทีไรไฟล์ก็ไปกองบน Desktop จนเต็มไปด้วย `Screenshot 2026-…png` Boardshot เป็นแอปเล็กๆ บนแถบเมนูที่ส่งภาพทั้งหมดไปไว้โฟลเดอร์เดียว แล้วให้หน้าต่างเล็กๆ ไว้หา ดูภาพ ลากไปใช้ หรือลบ ถ่ายจอแบบเดิมได้ทุกอย่าง
+
+> [!NOTE]
 > **Beta** Boardshot ยังใหม่และอยู่ระหว่างทดสอบ อาจมีบั๊กได้ เจออะไร[แจ้งได้ที่นี่](https://github.com/phukijnat/boardshot/issues/new/choose)
 
-<!-- TODO: ใส่ภาพหน้าจอ docs/screenshot.png -->
+## ความสามารถ
 
-- ถ่ายจอด้วยคีย์ลัดเดิม (`⌘⇧3`, `⌘⇧4`, `⌘⇧5`) ไฟล์จะไปอยู่ที่ `~/Pictures/Boardshot` แทน Desktop
-- รูปเล็กมุมจอของระบบถูกแทนด้วยของ Boardshot ไฟล์จึงเข้าโฟลเดอร์ทันที
-- อัปเดตในแอปได้ แอปจะบอกเมื่อมีเวอร์ชันใหม่และติดตั้งให้เอง
-- มีภาษาไทยและอังกฤษ
-
-ใช้ได้กับ macOS 14 ขึ้นไป ทั้งเครื่อง Apple Silicon และ Intel
+- **คีย์ลัดเดิม Desktop สะอาด** `⌘⇧3`, `⌘⇧4` และ `⌘⇧5` บันทึกไปที่ `~/Pictures/Boardshot` แทน Desktop
+- **ไฟล์มาทันที** รูปเล็กมุมจอของระบบถูกแทนด้วยของ Boardshot ไฟล์จึงเข้าโฟลเดอร์ทันที
+- **หน้าต่างเรียกใช้เร็ว** กด `⇧⌘Space` เห็นทุกภาพ ชี้เพื่อดูภาพใหญ่ ลากไปวางในแอปไหนก็ได้ คัดลอก หรือลบ
+- **คืนค่าเดิมได้ทุกเมื่อ** แอปจำค่าเดิมของ Mac ไว้ และคืนให้ด้วยการเอาติ๊กออกช่องเดียว
+- **อัปเดตเอง** บอกเมื่อมีเวอร์ชันใหม่และติดตั้งให้
+- **เป็นส่วนตัว** ไม่ต้องสมัครบัญชี ไม่เก็บสถิติ ออกอินเทอร์เน็ตแค่ตอนเช็กอัปเดต
+- มีภาษาไทยและอังกฤษ ใช้ได้กับ macOS 14 ขึ้นไป ทั้งเครื่อง Apple Silicon และ Intel
 
 ## ติดตั้ง
 
-1. โหลด `Boardshot-x.y.z.dmg` ตัวล่าสุดจาก [Releases](https://github.com/phukijnat/boardshot/releases)
+1. [ดาวน์โหลด **Boardshot.dmg**](https://github.com/phukijnat/boardshot/releases/latest/download/Boardshot.dmg) (เป็นเวอร์ชันล่าสุดเสมอ) เวอร์ชันเก่าอยู่ที่หน้า [Releases](https://github.com/phukijnat/boardshot/releases)
 2. เปิดไฟล์ แล้วลาก **Boardshot** ไปใส่ **Applications**
 3. เปิด Boardshot จาก Applications
 
@@ -64,6 +78,20 @@ Boardshot ยังไม่ได้ผ่านการตรวจ (notarize
 
 แอปเปลี่ยนค่าระบบ 2 ค่า (`com.apple.screencapture`: `location` กับ `show-thumbnail`) และจำค่าเดิมไว้ เอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออกเมื่อไหร่ก็คืนค่าเดิมให้ แต่การปิดแอปจะไม่คืนค่า
 
+## คำถามที่พบบ่อย
+
+**ภาพที่อยู่บน Desktop อยู่แล้วจะถูกย้ายไหม?**
+ไม่ย้าย เฉพาะภาพที่ถ่ายใหม่เท่านั้นที่ไปอยู่ `~/Pictures/Boardshot` ถ้าอยากให้ภาพเก่าขึ้นในหน้าต่างด้วย ย้ายเข้าโฟลเดอร์นั้นเองได้
+
+**ถ้าเคยตั้งโฟลเดอร์เก็บ screenshot เองไว้ จะเป็นยังไง?**
+Boardshot จำค่านั้นไว้ และคืนให้เมื่อเอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออก
+
+**Boardshot ส่งอะไรออกอินเทอร์เน็ตไหม?**
+มีแค่การเช็กอัปเดต ซึ่งอ่านไฟล์ [`appcast.xml`](appcast.xml) จาก repo นี้ ปิดการเช็กอัตโนมัติได้ในหน้าตั้งค่า
+
+**ทำไมยังไม่ผ่าน notarize?**
+ต้องใช้บัญชีนักพัฒนา Apple แบบเสียเงิน แอปนี้เป็นโอเพนซอร์ส [build เองได้](#build-เอง)
+
 ## ลบแอป
 
 1. ตั้งค่า… → เอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออก
@@ -87,6 +115,16 @@ defaults delete com.apple.screencapture location; defaults delete com.apple.scre
 
 ชื่อแอป, bundle ID, เวอร์ชัน และลิงก์อัปเดต อยู่ใน [`config.sh`](config.sh) วิธีปล่อยเวอร์ชันใหม่ดูใน [CONTRIBUTING.md](CONTRIBUTING.md)
 
+## แจ้งปัญหาและร่วมพัฒนา
+
+เจอบั๊กหรือมีไอเดีย [เปิด issue ได้เลย](https://github.com/phukijnat/boardshot/issues/new/choose) ส่ง Pull Request ได้เช่นกัน วิธี build และปล่อยเวอร์ชันดูใน [CONTRIBUTING.md](CONTRIBUTING.md)
+
+ถ้า Boardshot ช่วยให้ Desktop สะอาดขึ้น กด ⭐ ให้ repo จะช่วยให้คนอื่นเจอแอปนี้ง่ายขึ้น
+
+## ขอบคุณ
+
+- [Sparkle](https://sparkle-project.org) สำหรับระบบอัปเดตในแอป
+
 ## License
 
-[MIT](LICENSE)
+Boardshot เป็นซอฟต์แวร์ฟรีและโอเพนซอร์ส ภายใต้ [MIT License](LICENSE) © 2026 phukijnat

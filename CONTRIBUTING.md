@@ -35,7 +35,7 @@ Needs the update-signing key in your Keychain (account `boardshot`, made with `v
 
 1. Add a `## x.y.z` section to `CHANGELOG.md` and commit.
 2. `./release.sh x.y.z` — sets the version, builds the dmg, signs it and adds it to `appcast.xml`.
-3. Create the GitHub release `vx.y.z` and attach `dist/Boardshot-x.y.z.dmg` **before** pushing `appcast.xml`, so the update link works when the app sees it.
+3. Create the GitHub release `vx.y.z` and attach both `dist/Boardshot-x.y.z.dmg` and `dist/Boardshot.dmg` (the README download button points at `Boardshot.dmg` in the latest release) **before** pushing `appcast.xml`, so the update link works when the app sees it.
 4. Commit, tag and push (the script prints the commands).
 
 To try an update end to end without publishing: `./release.sh x.y.z --local`, then serve `build/local-feed` on port 8000. Builds made this way point at `http://localhost:8000`, so reinstall a normal build afterwards.
