@@ -4,6 +4,18 @@
     <title>Boardshot</title>
     <!-- ITEMS -->
     <item>
+      <title>0.1.2</title>
+      <pubDate>Tue, 17 Nov 2026 14:10:21 +0000</pubDate>
+      <sparkle:version>102</sparkle:version>
+      <sparkle:shortVersionString>0.1.2</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul>
+<li>The installer window has an **Open Anyway** shortcut that jumps straight to System Settings → Privacy & Security.</li>
+</ul>
+]]></description>
+      <enclosure url="https://github.com/phukijnat/boardshot/releases/download/v0.1.2/Boardshot-0.1.2.dmg" length="1456293" type="application/octet-stream" sparkle:edSignature="hlm6qmRE/26KeavCs1Ilw1ziBwqd56r5GrXQ5FFUaeyMQAVuJ68zxQ9IpcRJl8U/+Eu/kDkbdDkeT7L1eAc/Bw=="/>
+    </item>
+    <item>
       <title>0.1.1</title>
       <pubDate>Tue, 17 Nov 2026 13:54:18 +0000</pubDate>
       <sparkle:version>101</sparkle:version>
