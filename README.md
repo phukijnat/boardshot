@@ -22,7 +22,11 @@ Requires macOS 14 or later, on Apple Silicon or Intel.
 3. Open Boardshot from Applications.
 
 ### "Apple could not verify Boardshot…"
-Boardshot isn't notarized by Apple (that needs a paid developer account), so macOS blocks it the first time. You only need to do this once:
+Boardshot isn't notarized by Apple (that needs a paid developer account), so macOS blocks it the first time. Click **Done**, not Move to Trash:
+
+<img src="docs/first-launch-done.png" width="260" alt="The 'Boardshot Not Opened' dialog with Done circled">
+
+Then, once:
 
 - **macOS 15 or later:** click **Done**, open **System Settings → Privacy & Security**, scroll down and click **Open Anyway** next to Boardshot, then confirm.
 - **macOS 14:** right-click Boardshot in Applications, choose **Open**, then click **Open** again.

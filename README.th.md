@@ -22,7 +22,11 @@
 3. เปิด Boardshot จาก Applications
 
 ### ถ้าขึ้นว่า "Apple could not verify Boardshot…"
-Boardshot ยังไม่ได้ผ่านการตรวจ (notarize) ของ Apple เพราะต้องสมัครบัญชีนักพัฒนาแบบเสียเงิน macOS เลยบล็อกตอนเปิดครั้งแรก ทำแค่ครั้งเดียว:
+Boardshot ยังไม่ได้ผ่านการตรวจ (notarize) ของ Apple เพราะต้องสมัครบัญชีนักพัฒนาแบบเสียเงิน macOS เลยบล็อกตอนเปิดครั้งแรก ให้กด **Done** อย่ากด Move to Trash:
+
+<img src="docs/first-launch-done.png" width="260" alt="หน้าต่าง Boardshot Not Opened วงปุ่ม Done ไว้">
+
+จากนั้นทำแค่ครั้งเดียว:
 
 - **macOS 15 ขึ้นไป:** กด **Done** แล้วไปที่ **System Settings → Privacy & Security** เลื่อนลงไปกด **Open Anyway** ข้าง Boardshot แล้วยืนยัน
 - **macOS 14:** คลิกขวาที่ Boardshot ใน Applications เลือก **Open** แล้วกด **Open** อีกครั้ง

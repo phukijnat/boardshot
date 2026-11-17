@@ -2,6 +2,10 @@
 
 `release.sh` turns the bullet list under each version into the release notes users see in the update window.
 
+## 0.1.1
+
+- The installer window now shows how to install and what to do the first time macOS blocks the app.
+
 ## 0.1.0
 
 - First beta release.

@@ -59,15 +59,7 @@ for arg in "$@"; do
       echo "Installed to /Applications/${APP_NAME}.app"
       ;;
     --dmg)
-      mkdir -p dist
-      DMG="dist/${APP_NAME}-${VERSION}.dmg"
-      stage=$(mktemp -d)
-      ditto "$APP" "$stage/${APP_NAME}.app"
-      ln -s /Applications "$stage/Applications"
-      rm -f "$DMG"
-      hdiutil create -quiet -volname "$APP_NAME" -srcfolder "$stage" -fs HFS+ -format UDZO "$DMG"
-      rm -rf "$stage"
-      echo "Made $DMG"
+      ./tools/make_dmg.sh "$APP" "dist/${APP_NAME}-${VERSION}.dmg" "$APP_NAME"
       ;;
   esac
 done
