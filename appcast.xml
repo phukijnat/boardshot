@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Boardshot</title>
+    <!-- ITEMS -->
+    <item>
+      <title>0.1.0</title>
+      <pubDate>Tue, 17 Nov 2026 13:07:54 +0000</pubDate>
+      <sparkle:version>100</sparkle:version>
+      <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul>
+<li>First beta release.</li>
+<li>Screenshots go to `~/Pictures/Boardshot`, with a quick panel to preview, drag, copy and delete them.</li>
+<li>Universal app for Apple Silicon and Intel, macOS 14 or later.</li>
+<li>Built-in updates.</li>
+</ul>
+]]></description>
+      <enclosure url="https://github.com/phukijnat/boardshot/releases/download/v0.1.0/Boardshot-0.1.0.dmg" length="1367205" type="application/octet-stream" sparkle:edSignature="id9+lB8rdor4u6RpD+Yfl9ZMiYkkXTK9DwvfOX750aKI3VYGjBQrJqv0XumNFHYL8fZmtHKdOWnRzYsTorFGAQ=="/>
+    </item>
+  </channel>
+</rss>

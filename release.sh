@@ -38,8 +38,13 @@ fi
 
 DMG="dist/${APP_NAME}-${NEW}.dmg"
 BUILD_NUM=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "build/${APP_NAME}.app/Contents/Info.plist")
-SIG=$(vendor/Sparkle/bin/sign_update --account boardshot -p "$DMG")
+SIG=$(vendor/Sparkle/bin/sign_update --account boardshot -p "$DMG" | tr -d '[:space:]')
 LEN=$(stat -f %z "$DMG")
+# Check the signature with the public key before it goes into the appcast.
+if ! swift tools/verify_sig.swift "$SPARKLE_PUBLIC_KEY" "$SIG" "$DMG" >/dev/null; then
+  echo "Signature check failed for $DMG; appcast not changed." >&2
+  exit 1
+fi
 
 # Release notes from CHANGELOG.md -> simple HTML list
 NOTES=$(mktemp)
