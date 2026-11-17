@@ -8,6 +8,7 @@ set -euo pipefail
 APP="$1"; DMG="$2"; VOL="$3"
 APP_FILE="$(basename "$APP")"
 BG="Resources/dmg-background.tiff"
+SHORTCUT="Open Anyway"
 [[ -f "$BG" ]] || { echo "Missing $BG (run: swift tools/make_dmg_background.swift)" >&2; exit 1; }
 
 if [[ -d "/Volumes/$VOL" ]]; then
@@ -22,6 +23,8 @@ trap 'hdiutil detach -quiet "/Volumes/$VOL" 2>/dev/null || true; rm -rf "$work"'
 mkdir -p "$work/stage/.background"
 ditto "$APP" "$work/stage/$APP_FILE"
 ln -s /Applications "$work/stage/Applications"
+# Shortcut to System Settings → Privacy & Security, where "Open Anyway" appears.
+ln -s /System/Library/PreferencePanes/Security.prefPane "$work/stage/$SHORTCUT"
 cp "$BG" "$work/stage/.background/background.tiff"
 
 # Writable image first, so Finder can store the layout in .DS_Store.
@@ -40,14 +43,15 @@ tell application "Finder"
     set current view of container window to icon view
     set toolbar visible of container window to false
     set statusbar visible of container window to false
-    set the bounds of container window to {200, 120, 860, 588}
+    set the bounds of container window to {200, 120, 860, 628}
     set opts to the icon view options of container window
     set arrangement of opts to not arranged
-    set icon size of opts to 112
+    set icon size of opts to 96
     set text size of opts to 13
     set background picture of opts to file ".background:background.tiff"
-    set position of item "$APP_FILE" of container window to {165, 150}
-    set position of item "Applications" of container window to {495, 150}
+    set position of item "$APP_FILE" of container window to {165, 140}
+    set position of item "Applications" of container window to {495, 140}
+    set position of item "$SHORTCUT" of container window to {548, 350}
     update without registering applications
     delay 1
     close

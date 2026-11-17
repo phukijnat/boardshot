@@ -2,11 +2,11 @@
 // and writes Resources/dmg-background.tiff (1x + 2x).
 // Run from the repo root: swift tools/make_dmg_background.swift
 //
-// Layout must match build.sh: window 660×440, app icon at (165, 150),
-// Applications at (495, 150), icon size 112.
+// Layout must match tools/make_dmg.sh: window 660×480, icon size 96,
+// app icon at (165, 140), Applications at (495, 140), "Open Anyway" at (548, 350).
 import AppKit
 
-let W: CGFloat = 660, H: CGFloat = 440
+let W: CGFloat = 660, H: CGFloat = 480
 let blue = NSColor(srgbRed: 0x2F/255, green: 0x6F/255, blue: 0xEB/255, alpha: 1)
 let ink = NSColor(srgbRed: 0x1D/255, green: 0x1D/255, blue: 0x1F/255, alpha: 1)
 let muted = NSColor(srgbRed: 0x5A/255, green: 0x5F/255, blue: 0x6A/255, alpha: 1)
@@ -54,38 +54,42 @@ func render(scale: CGFloat) -> NSBitmapImageRep {
     }
 
     // Step 1: arrow between the two icons
-    text("① ลากไปที่ Applications  ·  Drag to Applications", 0, 44, W, size: 13, weight: .semibold,
+    text("① ลากไปที่ Applications  ·  Drag to Applications", 0, 36, W, size: 13, weight: .semibold,
          color: blue, align: .center)
     let a = NSBezierPath()
     a.lineWidth = 4
     a.lineCapStyle = .round
-    a.move(to: NSPoint(x: 250, y: 150))
-    a.line(to: NSPoint(x: 405, y: 150))
-    a.move(to: NSPoint(x: 390, y: 138))
-    a.line(to: NSPoint(x: 407, y: 150))
-    a.line(to: NSPoint(x: 390, y: 162))
+    a.move(to: NSPoint(x: 250, y: 140))
+    a.line(to: NSPoint(x: 405, y: 140))
+    a.move(to: NSPoint(x: 390, y: 128))
+    a.line(to: NSPoint(x: 407, y: 140))
+    a.line(to: NSPoint(x: 390, y: 152))
     blue.setStroke()
     a.stroke()
 
-    // Step 2: card with first-launch instructions
-    let box = NSRect(x: 24, y: 252, width: W - 48, height: 168)
+    // Step 2: card. Steps on the left, the "Open Anyway" shortcut sits on the right.
+    let box = NSRect(x: 24, y: 236, width: W - 48, height: 228)
     card.setFill()
     let path = NSBezierPath(roundedRect: box, xRadius: 12, yRadius: 12)
     path.fill()
     line.setStroke()
     path.lineWidth = 1
     path.stroke()
+    // highlight behind the shortcut icon
+    let spot = NSBezierPath(roundedRect: NSRect(x: 478, y: 284, width: 140, height: 150), xRadius: 14, yRadius: 14)
+    NSColor(srgbRed: 0xEA/255, green: 0xF1/255, blue: 0xFD/255, alpha: 1).setFill()
+    spot.fill()
 
-    let x = box.minX + 18, w = box.width - 36
-    text("② เปิดครั้งแรก ถ้าขึ้นว่า “Boardshot” Not Opened", x, 268, w, size: 13.5, weight: .semibold)
-    text("If macOS says “Boardshot” Not Opened the first time:", x, 288, w, size: 11.5, color: muted)
-    text("กด Done  (อย่ากด Move to Trash)", x, 314, w, size: 13, weight: .semibold, color: warn)
-    text("Click Done, not Move to Trash", x, 333, w, size: 11.5, color: muted)
-    text("System Settings → Privacy & Security → เลื่อนลงล่างสุด → Open Anyway", x, 358, w, size: 13,
-         weight: .medium)
-    text("System Settings → Privacy & Security → scroll to the bottom → Open Anyway", x, 377, w,
-         size: 11.5, color: muted)
-    text("ทำครั้งเดียวต่อเครื่อง อัปเดตจากในแอปไม่ต้องทำอีก  ·  Only once; in-app updates skip this.", x, 400, w,
+    let x = box.minX + 18, w: CGFloat = 430
+    text("② เปิดแอปครั้งแรก ถ้าขึ้นว่า “Not Opened”", x, 252, w, size: 14, weight: .semibold)
+    text("If macOS says “Boardshot” Not Opened the first time:", x, 273, w, size: 11.5, color: muted)
+    text("1. กด Done  (อย่ากด Move to Trash)", x, 302, w, size: 13, weight: .semibold, color: warn)
+    text("    Click Done, not Move to Trash", x, 320, w, size: 11.5, color: muted)
+    text("2. ดับเบิลคลิก Open Anyway ทางขวา  →", x, 346, w, size: 13, weight: .semibold, color: blue)
+    text("    Double-click Open Anyway on the right", x, 364, w, size: 11.5, color: muted)
+    text("3. เลื่อนลงล่างสุด แล้วกด Open Anyway", x, 390, w, size: 13, weight: .semibold)
+    text("    Scroll to the bottom and click Open Anyway", x, 408, w, size: 11.5, color: muted)
+    text("ทำครั้งเดียว อัปเดตจากในแอปไม่ต้องทำอีก  ·  Only once; in-app updates skip this.", x, 438, W - 84,
          size: 11, color: muted)
 
     NSGraphicsContext.restoreGraphicsState()

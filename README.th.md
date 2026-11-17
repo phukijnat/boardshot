@@ -28,7 +28,7 @@ Boardshot ยังไม่ได้ผ่านการตรวจ (notarize
 
 จากนั้นทำแค่ครั้งเดียว:
 
-- **macOS 15 ขึ้นไป:** กด **Done** แล้วไปที่ **System Settings → Privacy & Security** เลื่อนลงไปกด **Open Anyway** ข้าง Boardshot แล้วยืนยัน
+- **macOS 15 ขึ้นไป:** กด **Done** แล้วดับเบิลคลิก **Open Anyway** ในหน้าต่างติดตั้ง (หรือไปที่ **System Settings → Privacy & Security** เอง) เลื่อนลงไปกด **Open Anyway** ข้าง Boardshot แล้วยืนยัน
 - **macOS 14:** คลิกขวาที่ Boardshot ใน Applications เลือก **Open** แล้วกด **Open** อีกครั้ง
 
 อัปเดตที่ติดตั้งจากในแอปไม่ต้องทำขั้นตอนนี้อีก

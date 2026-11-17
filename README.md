@@ -28,7 +28,7 @@ Boardshot isn't notarized by Apple (that needs a paid developer account), so mac
 
 Then, once:
 
-- **macOS 15 or later:** click **Done**, open **System Settings → Privacy & Security**, scroll down and click **Open Anyway** next to Boardshot, then confirm.
+- **macOS 15 or later:** click **Done**, then double-click **Open Anyway** in the installer window (or open **System Settings → Privacy & Security**), scroll down and click **Open Anyway** next to Boardshot, then confirm.
 - **macOS 14:** right-click Boardshot in Applications, choose **Open**, then click **Open** again.
 
 Updates installed from inside the app don't need this step again.
