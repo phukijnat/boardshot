@@ -119,6 +119,12 @@ enum Prefs {
         set { d.set(newValue, forKey: "showCornerThumb"); changed() }
     }
 
+    /// Whether hovering a thumbnail in the panel shows a larger preview (on by default).
+    static var showHoverPreview: Bool {
+        get { d.object(forKey: "showHoverPreview") as? Bool ?? true }
+        set { d.set(newValue, forKey: "showHoverPreview"); changed() }
+    }
+
     /// Whether the camera icon shows in the menu bar (on by default).
     static var showMenuBarIcon: Bool {
         get { d.object(forKey: "showMenuBarIcon") as? Bool ?? true }

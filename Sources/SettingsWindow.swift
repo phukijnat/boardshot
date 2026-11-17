@@ -159,6 +159,12 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         manageCol.alignment = .leading
         manageCol.spacing = 4
 
+        // Hover preview
+        let hoverPreview = NSButton(checkboxWithTitle: tr("แสดงภาพใหญ่เมื่อชี้เมาส์ค้างบนรูป",
+                                                          "Show a larger preview when hovering a shot"),
+                                    target: self, action: #selector(hoverPreviewChanged(_:)))
+        hoverPreview.state = Prefs.showHoverPreview ? .on : .off
+
         // Login
         let login = NSButton(checkboxWithTitle: tr("เปิดอัตโนมัติตอนเข้าเครื่อง", "Open at login"),
                              target: self, action: #selector(loginChanged(_:)))
@@ -211,6 +217,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             [label(tr("คีย์ลัดเปิดหน้าต่าง", "Open shortcut")), shortcutCol],
             [label(tr("ภาษา", "Language")), langPopup],
             [label(tr("Screenshot", "Screenshots")), manageCol],
+            [label(tr("หน้าต่าง", "Panel")), hoverPreview],
             [NSGridCell.emptyContentView, login],
             [label(tr("แถบเมนู", "Menu bar")), menuBarCol],
             [label(tr("อัปเดต", "Updates")), updateCol],
@@ -260,6 +267,10 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
 
     @objc private func cornerChanged(_ sender: NSButton) {
         Prefs.showCornerThumb = (sender.state == .on)
+    }
+
+    @objc private func hoverPreviewChanged(_ sender: NSButton) {
+        Prefs.showHoverPreview = (sender.state == .on)
     }
 
     @objc private func menuBarChanged(_ sender: NSButton) {

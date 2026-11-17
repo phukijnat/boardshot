@@ -52,7 +52,7 @@ Updates installed from inside the app don't need this step again.
 | Action | How |
 |---|---|
 | Open / close the panel | `⇧⌘Space` (change it in Settings) or click the camera icon in the menu bar |
-| Preview a shot larger | Hover over it |
+| Preview a shot larger | Hover over it (can be turned off in Settings) |
 | Select several | `⌘`-click, `⇧`-click, `⌘A`, or drag over empty space |
 | Use a shot | Drag it into another app; the panel closes by itself |
 | Copy | `⌘C` |
@@ -70,6 +70,7 @@ Open from the menu bar icon → **Settings…**, the **⋯** button in the panel
 - Language: Thai / English
 - Keep screenshots in Boardshot: on / off
 - Corner thumbnail after capture
+- Larger preview when hovering a shot
 - Open at login
 - Show the menu bar icon
 - Check for updates automatically, or **Check Now**

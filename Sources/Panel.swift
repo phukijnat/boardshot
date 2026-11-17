@@ -458,7 +458,7 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
 
     private func hover(_ inside: Bool, item: ThumbItem) {
         cancelHover()
-        guard inside, !dragging, let url = item.url else { return }
+        guard inside, Prefs.showHoverPreview, !dragging, let url = item.url else { return }
         hoverTimer = Timer.scheduledTimer(withTimeInterval: 0.45, repeats: false) { [weak self, weak item] _ in
             guard let self, let item, item.url == url, let win = item.view.window else { return }
             let rectInWindow = item.view.convert(item.view.bounds, to: nil)
