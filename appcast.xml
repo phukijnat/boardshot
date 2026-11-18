@@ -4,6 +4,22 @@
     <title>Boardshot</title>
     <!-- ITEMS -->
     <item>
+      <title>0.3.0</title>
+      <pubDate>Wed, 18 Nov 2026 10:54:56 +0000</pubDate>
+      <sparkle:version>300</sparkle:version>
+      <sparkle:shortVersionString>0.3.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul>
+<li>A welcome window on first launch. Boardshot now asks before changing your screenshot settings, explains the two thumbnails so you can pick one, has you try a screenshot, and offers to open at login. See it again from Settings → Show Welcome Again.</li>
+<li>If you keep your current screenshot folder, the empty Boardshot window says so and offers to switch.</li>
+<li>Quitting Boardshot brings back the macOS thumbnail, so a screenshot taken while the app is closed no longer looks like it failed. Screenshots still go to `~/Pictures/Boardshot`. This also works if Boardshot crashes or is force quit.</li>
+<li>Ready for macOS 27, which is expected to read the screenshot folder from new settings.</li>
+<li>Fixed: with "Keep screenshots in Boardshot" off, each launch could reset a custom screenshot folder to the Desktop.</li>
+</ul>
+]]></description>
+      <enclosure url="https://github.com/phukijnat/boardshot/releases/download/v0.3.0/Boardshot-0.3.0.dmg" length="1555803" type="application/octet-stream" sparkle:edSignature="fXYsYAO8osNWa1KwKhV2lvtsStdSDpifA0aY2pusaFG6aOAab5bOR5cUukUtjXwYn0rhp7V5VBl2PNw1kO78AA=="/>
+    </item>
+    <item>
       <title>0.2.2</title>
       <pubDate>Wed, 18 Nov 2026 09:26:59 +0000</pubDate>
       <sparkle:version>202</sparkle:version>
