@@ -2,7 +2,8 @@ import Foundation
 
 /// Reads and writes the system screenshot settings (`com.apple.screencapture`).
 /// When "manage screenshots" is on, screenshots go to Boardshot's folder and the
-/// floating thumbnail is off so files land instantly. Turning it off in Settings
+/// floating thumbnail follows `Prefs.thumbStyle`: off (files land instantly) unless
+/// the user picked the macOS thumbnail. Turning "manage screenshots" off in Settings
 /// puts the user's original values back. Quitting the app does not change anything.
 enum ScreencaptureSettings {
     private static let domain = "com.apple.screencapture"
@@ -13,9 +14,9 @@ enum ScreencaptureSettings {
     private static let savedFlag = "originalsSaved"
     private static func savedKey(_ k: String) -> String { "original." + k }
 
-    static func apply(folder: URL) {
+    static func apply(folder: URL, systemThumbnail: Bool) {
         // Already set up: don't restart the system UI on every launch.
-        if read("location") == folder.path, read("show-thumbnail") == "0" { return }
+        if read("location") == folder.path, read("show-thumbnail") == (systemThumbnail ? "1" : "0") { return }
 
         // Only remember originals once, so they stay the user's real values.
         if !store.bool(forKey: savedFlag) {
@@ -26,7 +27,7 @@ enum ScreencaptureSettings {
             store.set(true, forKey: savedFlag)
         }
         defaults(["write", domain, "location", "-string", folder.path])
-        defaults(["write", domain, "show-thumbnail", "-bool", "false"])
+        defaults(["write", domain, "show-thumbnail", "-bool", systemThumbnail ? "true" : "false"])
         refreshSystemUI()
     }
 

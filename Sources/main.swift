@@ -11,6 +11,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         .appendingPathComponent("Pictures/\(AppInfo.name)", isDirectory: true)
 
     func applicationDidFinishLaunching(_ note: Notification) {
+        // Only one copy at a time: two copies would fight over the system
+        // screenshot settings. Show the running one's panel and quit this one.
+        if let other = NSRunningApplication.runningApplications(
+            withBundleIdentifier: Bundle.main.bundleIdentifier ?? "").first(where: { $0 != .current }),
+           let url = other.bundleURL {
+            NSWorkspace.shared.openApplication(at: url, configuration: .init()) { _, _ in
+                DispatchQueue.main.async { exit(0) }
+            }
+            return
+        }
+
         store = ShotStore(folder: Self.folder)
         applyManageSetting()
         panel = PanelController(store: store)
@@ -48,12 +59,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     /// Opening the app again (Finder, Spotlight, `open`) shows the panel.
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        panel.show()
+        panel?.show()   // nil while a duplicate copy is quitting
         return false
     }
 
     private func showCorner(for shot: Shot, retry: Bool = true) {
-        guard Prefs.showCornerThumb, Prefs.manageScreenshots, !panel.isVisible else { return }
+        guard Prefs.thumbStyle == .boardshot, Prefs.manageScreenshots, !panel.isVisible else { return }
         store.thumbnail(for: shot.url, size: CGSize(width: 440, height: 300)) { [weak self] img in
             guard let self else { return }
             if let img = img ?? NSImage(contentsOf: shot.url) {
@@ -68,7 +79,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     private func applyManageSetting() {
-        if Prefs.manageScreenshots { ScreencaptureSettings.apply(folder: Self.folder) }
+        if Prefs.thumbStyle != .boardshot || !Prefs.manageScreenshots { corner.hide() }
+        if Prefs.manageScreenshots {
+            ScreencaptureSettings.apply(folder: Self.folder, systemThumbnail: Prefs.thumbStyle.systemThumbnail)
+        }
         else { ScreencaptureSettings.restore() }
     }
 

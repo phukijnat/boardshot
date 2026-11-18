@@ -144,17 +144,29 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
                               target: self, action: #selector(manageChanged(_:)))
         manage.state = Prefs.manageScreenshots ? .on : .off
         let manageNote = NSTextField(wrappingLabelWithString: tr(
-            "ภาพไปที่ ~/Pictures/\(AppInfo.name) และปิดรูปเล็กมุมจอ\nเอาติ๊กออกเพื่อคืนค่าเดิมของ Mac ควรทำก่อนลบแอป",
-            "Screenshots go to ~/Pictures/\(AppInfo.name) and the corner thumbnail is off.\nUntick to restore the Mac's original settings. Do this before deleting the app."))
+            "ภาพไปที่ ~/Pictures/\(AppInfo.name)\nเอาติ๊กออกเพื่อคืนค่าเดิมของ Mac ควรทำก่อนลบแอป",
+            "Screenshots go to ~/Pictures/\(AppInfo.name).\nUntick to restore the Mac's original settings. Do this before deleting the app."))
         manageNote.font = .systemFont(ofSize: 11)
         manageNote.textColor = .secondaryLabelColor
         manageNote.preferredMaxLayoutWidth = 320
-        let corner = NSButton(checkboxWithTitle: tr("แสดงรูปเล็กที่มุมจอหลังถ่าย (จอที่เมาส์อยู่)",
-                                                    "Show a thumbnail in the corner after capture (on the mouse's screen)"),
-                              target: self, action: #selector(cornerChanged(_:)))
-        corner.state = Prefs.showCornerThumb ? .on : .off
-        corner.isEnabled = Prefs.manageScreenshots
-        let manageCol = NSStackView(views: [manage, manageNote, corner])
+
+        // Thumbnail after capture
+        let thumbLabel = NSTextField(labelWithString: tr("รูปเล็กหลังถ่าย", "Thumbnail after capture"))
+        let thumbPopup = NSPopUpButton()
+        for s in ThumbStyle.allCases { thumbPopup.addItem(withTitle: Self.title(for: s)) }
+        thumbPopup.selectItem(at: ThumbStyle.allCases.firstIndex(of: Prefs.thumbStyle) ?? 0)
+        thumbPopup.target = self
+        thumbPopup.action = #selector(thumbStyleChanged(_:))
+        thumbPopup.isEnabled = Prefs.manageScreenshots
+        let thumbRow = NSStackView(views: [thumbLabel, thumbPopup])
+        thumbRow.spacing = 8
+        thumbRow.alignment = .firstBaseline
+        let thumbNote = NSTextField(wrappingLabelWithString: Self.note(for: Prefs.thumbStyle))
+        thumbNote.font = .systemFont(ofSize: 11)
+        thumbNote.textColor = .secondaryLabelColor
+        thumbNote.preferredMaxLayoutWidth = 320
+
+        let manageCol = NSStackView(views: [manage, manageNote, thumbRow, thumbNote])
         manageCol.orientation = .vertical
         manageCol.alignment = .leading
         manageCol.spacing = 4
@@ -265,8 +277,30 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         onManageChanged?()
     }
 
-    @objc private func cornerChanged(_ sender: NSButton) {
-        Prefs.showCornerThumb = (sender.state == .on)
+    @objc private func thumbStyleChanged(_ sender: NSPopUpButton) {
+        Prefs.thumbStyle = ThumbStyle.allCases[sender.indexOfSelectedItem]
+        onManageChanged?()   // writes the system `show-thumbnail` setting
+    }
+
+    private static func title(for s: ThumbStyle) -> String {
+        switch s {
+        case .boardshot: return tr("ของ \(AppInfo.name)", "\(AppInfo.name)'s")
+        case .macOS: return tr("ของ macOS", "macOS")
+        case .none: return tr("ไม่แสดง", "None")
+        }
+    }
+
+    private static func note(for s: ThumbStyle) -> String {
+        switch s {
+        case .boardshot:
+            return tr("ขึ้นที่มุมขวาล่างของจอที่เมาส์อยู่ ไฟล์เข้าทันที",
+                      "Shows in the bottom-right of the screen the mouse is on. The file is saved right away.")
+        case .macOS:
+            return tr("คลิกเพื่อแก้ไขด้วย Markup ของ Mac ได้ แต่ไฟล์จะเข้า \(AppInfo.name) หลังรูปเล็กหายไป (ราว 5 วินาที หรือปัดออกเพื่อให้เข้าทันที) และ macOS อาจไม่แสดงรูปเล็กเมื่อแคปจากจอที่สอง",
+                      "Click it to edit with the Mac's Markup. The file reaches \(AppInfo.name) only after the thumbnail goes away (about 5 seconds, or swipe it away to save now). macOS may not show it for captures on a second display.")
+        case .none:
+            return tr("ไม่มีรูปเล็ก ไฟล์เข้าทันที", "No thumbnail. The file is saved right away.")
+        }
     }
 
     @objc private func hoverPreviewChanged(_ sender: NSButton) {

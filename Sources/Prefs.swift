@@ -5,6 +5,20 @@ extension Notification.Name {
     static let prefsChanged = Notification.Name("PrefsChanged")
 }
 
+/// The thumbnail shown after a screenshot.
+enum ThumbStyle: String, CaseIterable {
+    /// Boardshot's corner thumbnail. The file is saved right away.
+    case boardshot
+    /// The macOS floating thumbnail, with its Markup editor. macOS only saves
+    /// the file once the thumbnail goes away (about 5 seconds, or a swipe).
+    case macOS
+    /// No thumbnail. The file is saved right away.
+    case none
+
+    /// Whether the system's `show-thumbnail` setting should be on.
+    var systemThumbnail: Bool { self == .macOS }
+}
+
 enum Lang: String, CaseIterable {
     case th, en
     var label: String { self == .th ? "ไทย" : "English" }
@@ -113,10 +127,14 @@ enum Prefs {
         set { d.set(newValue, forKey: "manageScreenshots"); changed() }
     }
 
-    /// Whether Boardshot's own corner thumbnail appears after a screenshot (on by default).
-    static var showCornerThumb: Bool {
-        get { d.object(forKey: "showCornerThumb") as? Bool ?? true }
-        set { d.set(newValue, forKey: "showCornerThumb"); changed() }
+    /// Which thumbnail appears after a screenshot (Boardshot's by default).
+    /// Older versions stored an on/off `showCornerThumb`; "off" carries over as `.none`.
+    static var thumbStyle: ThumbStyle {
+        get {
+            if let raw = d.string(forKey: "thumbStyle"), let s = ThumbStyle(rawValue: raw) { return s }
+            return d.object(forKey: "showCornerThumb") as? Bool == false ? .none : .boardshot
+        }
+        set { d.set(newValue.rawValue, forKey: "thumbStyle"); changed() }
     }
 
     /// Whether hovering a thumbnail in the panel shows a larger preview (on by default).

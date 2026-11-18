@@ -2,6 +2,11 @@
 
 `release.sh` turns the bullet list under each version into the release notes users see in the update window.
 
+## 0.2.1
+
+- Choose the thumbnail after capture (Settings → Screenshots): Boardshot's (file saved right away), the macOS one (with its Markup editor; the file arrives once the thumbnail goes away, and macOS may not show it for captures on a second display), or none.
+- Opening a second copy of Boardshot now brings up the one already running instead of running both.
+
 ## 0.2.0
 
 - New setting: turn off the larger preview that appears when you hover a shot (Settings → Panel).

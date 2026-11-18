@@ -23,7 +23,7 @@ Take a screenshot the way you always do, press `⇧⌘Space`, and drag it straig
 
 - **Quick panel.** `⇧⌘Space` opens every shot: hover to preview, drag into any app, copy, or trash.
 - **Same shortcuts, tidy Desktop.** `⌘⇧3`, `⌘⇧4` and `⌘⇧5` save to `~/Pictures/Boardshot` instead of the Desktop.
-- **Instant files.** Boardshot's own corner thumbnail replaces the system one, so the file is saved right away.
+- **Instant files.** Boardshot's own corner thumbnail replaces the system one, so the file is saved right away. Prefer the Mac's Markup editor? Switch back to the macOS thumbnail in Settings.
 - **Undo anytime.** Your original screenshot settings are saved and put back with one checkbox.
 - **Updates itself.** Tells you when a new version is out and installs it.
 - **Private.** No account, no analytics. The only network request is the update check.
@@ -69,7 +69,7 @@ Open from the menu bar icon → **Settings…**, the **⋯** button in the panel
 - Shortcut to open the panel (must include `⌘`, `⌃` or `⌥`)
 - Language: Thai / English
 - Keep screenshots in Boardshot: on / off
-- Corner thumbnail after capture
+- Thumbnail after capture: Boardshot's (instant file), macOS (Markup editor; the file arrives once the thumbnail goes away, and it may not appear on a second display), or none
 - Larger preview when hovering a shot
 - Open at login
 - Show the menu bar icon
