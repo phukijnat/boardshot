@@ -77,7 +77,7 @@ Open from the menu bar icon → **Settings…**, the **⋯** button in the panel
 
 ## What Boardshot changes on your Mac
 
-To redirect screenshots, Boardshot changes two system settings (`com.apple.screencapture`: `location` and `show-thumbnail`). It remembers your original values and puts them back when you untick **Keep screenshots in Boardshot**. Quitting the app does not undo this.
+To redirect screenshots, Boardshot changes two system settings (`com.apple.screencapture`: `location` and `show-thumbnail`). It remembers your original values and puts them back when you untick **Keep screenshots in Boardshot**. Quitting the app puts back only the macOS thumbnail, so you still see your captures; screenshots keep going to `~/Pictures/Boardshot`.
 
 ## FAQ
 

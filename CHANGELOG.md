@@ -2,6 +2,10 @@
 
 `release.sh` turns the bullet list under each version into the release notes users see in the update window.
 
+## 0.2.3
+
+- Quitting Boardshot brings back the macOS thumbnail, so a screenshot taken while the app is closed no longer looks like it failed. Screenshots still go to `~/Pictures/Boardshot`.
+
 ## 0.2.2
 
 - ⌘A now selects every shot in the panel.

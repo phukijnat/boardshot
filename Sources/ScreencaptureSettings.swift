@@ -4,7 +4,8 @@ import Foundation
 /// When "manage screenshots" is on, screenshots go to Boardshot's folder and the
 /// floating thumbnail follows `Prefs.thumbStyle`: off (files land instantly) unless
 /// the user picked the macOS thumbnail. Turning "manage screenshots" off in Settings
-/// puts the user's original values back. Quitting the app does not change anything.
+/// puts the user's original values back. Quitting the app puts back only the
+/// thumbnail, so captures still show feedback; screenshots keep going to the folder.
 enum ScreencaptureSettings {
     private static let domain = "com.apple.screencapture"
     private static let keys = ["location", "show-thumbnail"]
@@ -53,6 +54,18 @@ enum ScreencaptureSettings {
         }
         store.set(false, forKey: savedFlag)
         refreshSystemUI()
+    }
+
+    /// Puts back only the user's original `show-thumbnail` (macOS default: on),
+    /// keeping the folder and the saved originals. Used on quit, when Boardshot's
+    /// own corner thumbnail goes away. No system UI restart: the thumbnail
+    /// setting applies on the next capture.
+    static func restoreThumbnail() {
+        var on = true
+        if store.bool(forKey: savedFlag), let v = store.string(forKey: savedKey("show-thumbnail")) {
+            on = (v == "1" || v.lowercased() == "true")
+        }
+        defaults(["write", domain, "show-thumbnail", "-bool", on ? "true" : "false"])
     }
 
     private static func read(_ key: String) -> String? {

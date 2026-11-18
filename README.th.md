@@ -77,7 +77,7 @@ Boardshot ยังไม่ได้ผ่านการตรวจ (notarize
 
 ## Boardshot เปลี่ยนอะไรในเครื่อง
 
-แอปเปลี่ยนค่าระบบ 2 ค่า (`com.apple.screencapture`: `location` กับ `show-thumbnail`) และจำค่าเดิมไว้ เอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออกเมื่อไหร่ก็คืนค่าเดิมให้ แต่การปิดแอปจะไม่คืนค่า
+แอปเปลี่ยนค่าระบบ 2 ค่า (`com.apple.screencapture`: `location` กับ `show-thumbnail`) และจำค่าเดิมไว้ เอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออกเมื่อไหร่ก็คืนค่าเดิมให้ ส่วนการปิดแอปจะคืนแค่รูปเล็กของ macOS ให้ยังเห็นว่าแคปติด ภาพยังเข้า `~/Pictures/Boardshot` เหมือนเดิม
 
 ## คำถามที่พบบ่อย
 

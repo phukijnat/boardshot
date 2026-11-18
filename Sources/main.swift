@@ -57,6 +57,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
     }
 
+    /// Our corner thumbnail goes away with the app, so give the macOS one back;
+    /// otherwise a capture after quitting shows nothing. The next launch turns it
+    /// off again. (Not reached by the duplicate copy, which quits with exit(0).)
+    func applicationWillTerminate(_ note: Notification) {
+        guard store != nil, Prefs.manageScreenshots, !Prefs.thumbStyle.systemThumbnail else { return }
+        ScreencaptureSettings.restoreThumbnail()
+    }
+
     /// Opening the app again (Finder, Spotlight, `open`) shows the panel.
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         panel?.show()   // nil while a duplicate copy is quitting
