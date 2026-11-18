@@ -104,13 +104,14 @@ final class GridView: NSCollectionView {
     var onShowSettings: (() -> Void)?
     var onQuit: (() -> Void)?
 
-    // No main menu in a menu-bar app, so handle ⌘C / ⌘, / ⌘Q here.
+    // No main menu in a menu-bar app, so handle ⌘A / ⌘C / ⌘, / ⌘Q here.
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
         guard event.type == .keyDown,
               event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command else {
             return super.performKeyEquivalent(with: event)
         }
         switch event.keyCode {
+        case 0: selectAll(nil); return true     // A
         case 8: onCopy?(); return true          // C
         case 43: onShowSettings?(); return true // ,
         case 12: onQuit?(); return true         // Q

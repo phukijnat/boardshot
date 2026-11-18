@@ -2,6 +2,10 @@
 
 `release.sh` turns the bullet list under each version into the release notes users see in the update window.
 
+## 0.2.2
+
+- ⌘A now selects every shot in the panel.
+
 ## 0.2.1
 
 - Choose the thumbnail after capture (Settings → Screenshots): Boardshot's (file saved right away), the macOS one (with its Markup editor; the file arrives once the thumbnail goes away, and macOS may not show it for captures on a second display), or none.
