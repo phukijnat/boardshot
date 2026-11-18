@@ -144,6 +144,8 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
     private let grid = GridView()
     private let countLabel = NSTextField(labelWithString: "")
     private let emptyLabel = NSTextField(labelWithString: "")
+    private let enableBtn = NSButton(title: "", target: nil, action: nil)
+    private var emptyBox: NSStackView!
     private let hintLabel = NSTextField(labelWithString: "")
     private var folderBtn: NSButton!
     private var moreBtn: NSButton!
@@ -155,6 +157,8 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
     private let confirmYes = NSButton(title: "", target: nil, action: nil)
     var onShowSettings: (() -> Void)?
     var onQuit: (() -> Void)?
+    /// Turns "Keep screenshots in Boardshot" on, from the empty panel.
+    var onEnableManage: (() -> Void)?
     private let preview = PreviewWindow()
     private var hoverTimer: Timer?
     private var dragging = false
@@ -289,6 +293,14 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
         emptyLabel.alignment = .center
         emptyLabel.textColor = .secondaryLabelColor
         emptyLabel.font = .systemFont(ofSize: 14)
+        // Shown when screenshots still go elsewhere, so Boardshot can't see them.
+        enableBtn.target = self
+        enableBtn.action = #selector(enableManage)
+        enableBtn.bezelStyle = .rounded
+        enableBtn.controlSize = .large
+        emptyBox = NSStackView(views: [emptyLabel, enableBtn])
+        emptyBox.orientation = .vertical
+        emptyBox.spacing = 12
 
         // Text-only "delete all?" bar that takes the header's place.
         confirmLabel.font = .systemFont(ofSize: 13, weight: .medium)
@@ -311,7 +323,7 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
         confirmBar.isHidden = true
         self.header = header
 
-        for v in [header, confirmBar, scroll, emptyLabel] as [NSView] {
+        for v in [header, confirmBar, scroll, emptyBox] as [NSView] {
             v.translatesAutoresizingMaskIntoConstraints = false
             bg.addSubview(v)
         }
@@ -328,8 +340,8 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
             scroll.leadingAnchor.constraint(equalTo: bg.leadingAnchor),
             scroll.trailingAnchor.constraint(equalTo: bg.trailingAnchor),
             scroll.bottomAnchor.constraint(equalTo: bg.bottomAnchor),
-            emptyLabel.centerXAnchor.constraint(equalTo: scroll.centerXAnchor),
-            emptyLabel.centerYAnchor.constraint(equalTo: scroll.centerYAnchor),
+            emptyBox.centerXAnchor.constraint(equalTo: scroll.centerXAnchor),
+            emptyBox.centerYAnchor.constraint(equalTo: scroll.centerYAnchor),
         ])
     }
 
@@ -351,16 +363,25 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
             .map { IndexPath(item: $0.offset, section: 0) }
         grid.selectionIndexPaths = Set(keep)
         refreshTexts()
-        emptyLabel.isHidden = !store.shots.isEmpty
+        emptyBox.isHidden = !store.shots.isEmpty
     }
+
+    @objc private func enableManage() { onEnableManage?() }
 
     @objc private func refreshTexts() {
         let n = store.shots.count
         countLabel.stringValue = tr("\(n) รูป", n == 1 ? "1 shot" : "\(n) shots")
         hintLabel.stringValue = tr("ลากออกเพื่อใช้ · ⌘/⇧ คลิกเลือกหลายรูป · ⌫ ลบ · Esc ปิด",
                                    "Drag out to use · ⌘/⇧-click to pick several · ⌫ delete · Esc close")
-        emptyLabel.stringValue = tr("ยังไม่มีภาพ\nกด ⇧⌘4 เพื่อถ่ายหน้าจอ",
-                                    "No screenshots yet\nPress ⇧⌘4 to take one")
+        if Prefs.manageScreenshots {
+            emptyLabel.stringValue = tr("ยังไม่มีภาพ\nกด ⇧⌘4 เพื่อถ่ายหน้าจอ",
+                                        "No screenshots yet\nPress ⇧⌘4 to take one")
+        } else {
+            emptyLabel.stringValue = tr("\(AppInfo.name) ยังไม่ได้เก็บภาพ\nscreenshot ใหม่ยังไปที่เดิม จึงไม่ขึ้นที่นี่",
+                                        "\(AppInfo.name) isn't keeping screenshots yet\nNew ones still go to their old folder, so they don't show here")
+        }
+        enableBtn.title = tr("ให้ \(AppInfo.name) เก็บภาพ", "Keep Screenshots in \(AppInfo.name)")
+        enableBtn.isHidden = Prefs.manageScreenshots
         folderBtn.toolTip = tr("เปิดโฟลเดอร์ใน Finder", "Show folder in Finder")
         moreBtn.toolTip = tr("ตั้งค่าและอื่นๆ", "Settings and more")
         clearBtn.toolTip = tr("ลบรูปทั้งหมด", "Delete all screenshots")

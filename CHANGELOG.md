@@ -2,10 +2,13 @@
 
 `release.sh` turns the bullet list under each version into the release notes users see in the update window.
 
-## 0.2.3
+## 0.3.0
 
+- A welcome window on first launch. Boardshot now asks before changing your screenshot settings, explains the two thumbnails so you can pick one, has you try a screenshot, and offers to open at login. See it again from Settings → Show Welcome Again.
+- If you keep your current screenshot folder, the empty Boardshot window says so and offers to switch.
 - Quitting Boardshot brings back the macOS thumbnail, so a screenshot taken while the app is closed no longer looks like it failed. Screenshots still go to `~/Pictures/Boardshot`. This also works if Boardshot crashes or is force quit.
 - Ready for macOS 27, which is expected to read the screenshot folder from new settings.
+- Fixed: with "Keep screenshots in Boardshot" off, each launch could reset a custom screenshot folder to the Desktop.
 
 ## 0.2.2
 

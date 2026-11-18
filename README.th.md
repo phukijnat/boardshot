@@ -34,6 +34,7 @@
 1. [ดาวน์โหลด **Boardshot.dmg**](https://github.com/phukijnat/boardshot/releases/latest/download/Boardshot.dmg) (เป็นเวอร์ชันล่าสุดเสมอ) เวอร์ชันเก่าอยู่ที่หน้า [Releases](https://github.com/phukijnat/boardshot/releases)
 2. เปิดไฟล์ แล้วลาก **Boardshot** ไปใส่ **Applications**
 3. เปิด Boardshot จาก Applications
+4. หน้าต้อนรับจะถามก่อนเปลี่ยนค่า screenshot ใดๆ ให้เลือกแบบรูปเล็ก ลองแคปจอหนึ่งภาพ และเลือกให้เปิดแอปเองตอนเข้าเครื่องได้ เรียกดูอีกครั้งได้ที่ **ตั้งค่า → แสดงหน้าแนะนำอีกครั้ง**
 
 ### ถ้าขึ้นว่า "Apple could not verify Boardshot…"
 Boardshot ยังไม่ได้ผ่านการตรวจ (notarize) ของ Apple เพราะต้องสมัครบัญชีนักพัฒนาแบบเสียเงิน macOS เลยบล็อกตอนเปิดครั้งแรก ให้กด **Done** อย่ากด Move to Trash:
@@ -74,10 +75,11 @@ Boardshot ยังไม่ได้ผ่านการตรวจ (notarize
 - เปิดอัตโนมัติตอนเข้าเครื่อง
 - แสดงไอคอนบนแถบเมนู
 - ตรวจหาอัปเดตอัตโนมัติ หรือกด **ตรวจเดี๋ยวนี้**
+- **แสดงหน้าแนะนำอีกครั้ง**: หน้าต้อนรับตอนเปิดครั้งแรก
 
 ## Boardshot เปลี่ยนอะไรในเครื่อง
 
-แอปเปลี่ยนค่าระบบใน `com.apple.screencapture` คือโฟลเดอร์เก็บภาพ (`location` รวมถึง `location-screenshot` และ `location-screenrecording` ที่คาดว่า macOS 27 จะใช้) กับ `show-thumbnail` และจำค่าเดิมไว้ เอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออกเมื่อไหร่ก็คืนค่าเดิมให้ ส่วนการปิดแอป หรือแอป crash จะคืนแค่รูปเล็กของ macOS ให้ยังเห็นว่าแคปติด ภาพยังเข้า `~/Pictures/Boardshot` เหมือนเดิม
+หลังจากคุณตกลงในหน้าต้อนรับ (หรือติ๊ก "เก็บ screenshot ไว้ที่ Boardshot") แอปจะเปลี่ยนค่าระบบใน `com.apple.screencapture` คือโฟลเดอร์เก็บภาพ (`location` รวมถึง `location-screenshot` และ `location-screenrecording` ที่คาดว่า macOS 27 จะใช้) กับ `show-thumbnail` และจำค่าเดิมไว้ เอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออกเมื่อไหร่ก็คืนค่าเดิมให้ ส่วนการปิดแอป หรือแอป crash จะคืนแค่รูปเล็กของ macOS ให้ยังเห็นว่าแคปติด ภาพยังเข้า `~/Pictures/Boardshot` เหมือนเดิม
 
 ## คำถามที่พบบ่อย
 

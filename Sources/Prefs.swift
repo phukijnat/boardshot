@@ -17,6 +17,51 @@ enum ThumbStyle: String, CaseIterable {
 
     /// Whether the system's `show-thumbnail` setting should be on.
     var systemThumbnail: Bool { self == .macOS }
+
+    // Texts shared by Settings and the first-launch window, so they stay the same.
+
+    var title: String {
+        switch self {
+        case .boardshot: return tr("ของ \(AppInfo.name)", "\(AppInfo.name)'s")
+        case .macOS: return tr("ของ macOS", "macOS")
+        case .none: return tr("ไม่แสดง", "None")
+        }
+    }
+
+    /// One-paragraph explanation, for Settings.
+    var note: String {
+        switch self {
+        case .boardshot:
+            return tr("ขึ้นที่มุมขวาล่างของจอที่เมาส์อยู่ ไฟล์เข้าทันที",
+                      "Shows in the bottom-right of the screen the mouse is on. The file is saved right away.")
+        case .macOS:
+            return tr("คลิกเพื่อแก้ไขด้วย Markup ของ Mac ได้ แต่ไฟล์จะเข้า \(AppInfo.name) หลังรูปเล็กหายไป (ราว 5 วินาที หรือปัดออกเพื่อให้เข้าทันที) และ macOS อาจไม่แสดงรูปเล็กเมื่อแคปจากจอที่สอง",
+                      "Click it to edit with the Mac's Markup. The file reaches \(AppInfo.name) only after the thumbnail goes away (about 5 seconds, or swipe it away to save now). macOS may not show it for captures on a second display.")
+        case .none:
+            return tr("ไม่มีรูปเล็ก ไฟล์เข้าทันที", "No thumbnail. The file is saved right away.")
+        }
+    }
+
+    /// What it's good at, in one short line (first-launch cards).
+    var pro: String {
+        switch self {
+        case .boardshot: return tr("ภาพเข้า \(AppInfo.name) ทันที คลิกเพื่อเปิดดู หรือลากไปใช้ได้เลย",
+                                   "Lands in \(AppInfo.name) instantly. Click to open it, or drag it straight into an app.")
+        case .macOS: return tr("คลิกเพื่อขีดเขียนหรือครอปภาพด้วย Markup ของ Mac",
+                               "Click to draw on it or crop it with the Mac's Markup.")
+        case .none: return tr("ไม่มีอะไรเด้งขึ้นมา ภาพเข้าทันที", "Nothing pops up. Lands right away.")
+        }
+    }
+
+    /// What you give up, in one short line (first-launch cards).
+    var con: String {
+        switch self {
+        case .boardshot: return tr("ไม่มีเครื่องมือขีดเขียน", "No drawing tools.")
+        case .macOS: return tr("ภาพเข้าช้าราว 5 วินาที หรือจนกว่าจะปัดรูปเล็กทิ้ง และอาจไม่ขึ้นเมื่อแคปจากจอที่สอง",
+                               "Lands about 5 seconds later, or once you swipe it away. May not show on a second display.")
+        case .none: return tr("ไม่เห็นว่าแคปติดหรือยัง", "No sign the capture worked.")
+        }
+    }
 }
 
 enum Lang: String, CaseIterable {
@@ -104,8 +149,12 @@ struct Shortcut: Codable, Equatable {
 enum Prefs {
     private static let d = UserDefaults.standard
 
+    /// Language for a preview window only; never saved.
+    static var langOverride: Lang?
+
     static var lang: Lang {
         get {
+            if let langOverride { return langOverride }
             if let raw = d.string(forKey: "lang"), let l = Lang(rawValue: raw) { return l }
             return Locale.preferredLanguages.first?.hasPrefix("th") == true ? .th : .en
         }
@@ -147,6 +196,33 @@ enum Prefs {
     static var showMenuBarIcon: Bool {
         get { d.object(forKey: "showMenuBarIcon") as? Bool ?? true }
         set { d.set(newValue, forKey: "showMenuBarIcon"); changed() }
+    }
+
+    /// Whether the first-launch window was finished (or skipped as an existing user).
+    static var onboardingDone: Bool {
+        get { d.bool(forKey: "onboardingDone") }
+        set {
+            d.set(newValue, forKey: "onboardingDone")
+            if newValue { d.removeObject(forKey: "onboardingPending") }
+        }
+    }
+
+    /// Decides once whether this person needs the first-launch window, and
+    /// returns true while they still do. Someone who used Boardshot before the
+    /// window existed (Sparkle marks every launch; an applied or chosen setting
+    /// leaves traces too) is never shown it. The decision is saved, because
+    /// Sparkle marks the first launch too: closing the window early must not
+    /// make the next launch look like an old user's.
+    static func needsOnboarding() -> Bool {
+        if onboardingDone { return false }
+        if d.bool(forKey: "onboardingPending") { return true }
+        let usedBefore = d.bool(forKey: "SUHasLaunchedBefore") || d.object(forKey: "manageScreenshots") != nil
+            || ScreencaptureSettings.hasSavedOriginals
+        if usedBefore { onboardingDone = true; return false }
+        d.set(true, forKey: "onboardingPending")
+        // Not managed until the user agrees, so the panel and Settings say so.
+        d.set(false, forKey: "manageScreenshots")
+        return true
     }
 
     private static func changed() {

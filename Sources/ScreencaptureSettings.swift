@@ -54,7 +54,13 @@ enum ScreencaptureSettings {
 
     /// Puts back what the user had before Boardshot. If nothing was saved,
     /// falls back to the macOS defaults (Desktop, thumbnail on).
+    /// Whether Boardshot has changed the system settings and remembers what to put back.
+    static var hasSavedOriginals: Bool { keys.contains(where: isSaved) }
+
     static func restore() {
+        // Nothing of ours to undo (never applied, or already restored): leave the
+        // user's settings alone and don't restart the system UI on every launch.
+        guard hasSavedOriginals else { return }
         // A new folder key with no original of its own (it held our folder, or
         // didn't exist yet) follows the user's original "location".
         let legacyFolder = isSaved("location") ? store.string(forKey: savedKey("location")) : nil

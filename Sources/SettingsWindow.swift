@@ -60,6 +60,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     private let errorLabel = NSTextField(labelWithString: "")
     var onManageChanged: (() -> Void)?
     var onQuit: (() -> Void)?
+    var onShowWelcome: (() -> Void)?
 
     override init() {
         super.init()
@@ -153,7 +154,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         // Thumbnail after capture
         let thumbLabel = NSTextField(labelWithString: tr("รูปเล็กหลังถ่าย", "Thumbnail after capture"))
         let thumbPopup = NSPopUpButton()
-        for s in ThumbStyle.allCases { thumbPopup.addItem(withTitle: Self.title(for: s)) }
+        for s in ThumbStyle.allCases { thumbPopup.addItem(withTitle: s.title) }
         thumbPopup.selectItem(at: ThumbStyle.allCases.firstIndex(of: Prefs.thumbStyle) ?? 0)
         thumbPopup.target = self
         thumbPopup.action = #selector(thumbStyleChanged(_:))
@@ -161,7 +162,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         let thumbRow = NSStackView(views: [thumbLabel, thumbPopup])
         thumbRow.spacing = 8
         thumbRow.alignment = .firstBaseline
-        let thumbNote = NSTextField(wrappingLabelWithString: Self.note(for: Prefs.thumbStyle))
+        let thumbNote = NSTextField(wrappingLabelWithString: Prefs.thumbStyle.note)
         thumbNote.font = .systemFont(ofSize: 11)
         thumbNote.textColor = .secondaryLabelColor
         thumbNote.preferredMaxLayoutWidth = 320
@@ -219,6 +220,11 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         let quitBtn = NSButton(title: tr("ออกจาก \(AppInfo.name)", "Quit \(AppInfo.name)"),
                                target: self, action: #selector(quitClicked))
         quitBtn.bezelStyle = .rounded
+        let welcomeBtn = NSButton(title: tr("แสดงหน้าแนะนำอีกครั้ง", "Show Welcome Again"),
+                                  target: self, action: #selector(welcomeClicked))
+        welcomeBtn.bezelStyle = .rounded
+        let bottomRow = NSStackView(views: [welcomeBtn, quitBtn])
+        bottomRow.spacing = 8
 
         func label(_ s: String) -> NSTextField {
             let l = NSTextField(labelWithString: s)
@@ -233,7 +239,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
             [NSGridCell.emptyContentView, login],
             [label(tr("แถบเมนู", "Menu bar")), menuBarCol],
             [label(tr("อัปเดต", "Updates")), updateCol],
-            [NSGridCell.emptyContentView, quitBtn],
+            [NSGridCell.emptyContentView, bottomRow],
         ])
         grid.rowSpacing = 16
         grid.columnSpacing = 12
@@ -282,27 +288,6 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         onManageChanged?()   // writes the system `show-thumbnail` setting
     }
 
-    private static func title(for s: ThumbStyle) -> String {
-        switch s {
-        case .boardshot: return tr("ของ \(AppInfo.name)", "\(AppInfo.name)'s")
-        case .macOS: return tr("ของ macOS", "macOS")
-        case .none: return tr("ไม่แสดง", "None")
-        }
-    }
-
-    private static func note(for s: ThumbStyle) -> String {
-        switch s {
-        case .boardshot:
-            return tr("ขึ้นที่มุมขวาล่างของจอที่เมาส์อยู่ ไฟล์เข้าทันที",
-                      "Shows in the bottom-right of the screen the mouse is on. The file is saved right away.")
-        case .macOS:
-            return tr("คลิกเพื่อแก้ไขด้วย Markup ของ Mac ได้ แต่ไฟล์จะเข้า \(AppInfo.name) หลังรูปเล็กหายไป (ราว 5 วินาที หรือปัดออกเพื่อให้เข้าทันที) และ macOS อาจไม่แสดงรูปเล็กเมื่อแคปจากจอที่สอง",
-                      "Click it to edit with the Mac's Markup. The file reaches \(AppInfo.name) only after the thumbnail goes away (about 5 seconds, or swipe it away to save now). macOS may not show it for captures on a second display.")
-        case .none:
-            return tr("ไม่มีรูปเล็ก ไฟล์เข้าทันที", "No thumbnail. The file is saved right away.")
-        }
-    }
-
     @objc private func hoverPreviewChanged(_ sender: NSButton) {
         Prefs.showHoverPreview = (sender.state == .on)
     }
@@ -316,6 +301,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     }
 
     @objc private func quitClicked() { onQuit?() }
+    @objc private func welcomeClicked() { window?.close(); onShowWelcome?() }
 
     @objc private func loginChanged(_ sender: NSButton) {
         let svc = SMAppService.mainApp

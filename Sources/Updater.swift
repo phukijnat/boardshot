@@ -6,7 +6,10 @@ import Sparkle
 final class Updater: NSObject {
     static let shared = Updater()
 
-    private let controller = SPUStandardUpdaterController(startingUpdater: true,
+    // Started by start(), not here: on a first run, Sparkle would otherwise ask
+    // "Check for updates automatically?" on top of the welcome window, which
+    // asks the same in the user's language.
+    private let controller = SPUStandardUpdaterController(startingUpdater: false,
                                                           updaterDelegate: nil,
                                                           userDriverDelegate: nil)
     private var updater: SPUUpdater { controller.updater }
@@ -17,12 +20,21 @@ final class Updater: NSObject {
         return !key.isEmpty
     }
 
+    private var started = false
+
+    func start() {
+        guard !started, isConfigured else { return }
+        started = true
+        controller.startUpdater()
+    }
+
     var automaticallyChecks: Bool {
         get { updater.automaticallyChecksForUpdates }
         set { updater.automaticallyChecksForUpdates = newValue }
     }
 
     @objc func checkForUpdates() {
+        start()
         NSApp.activate(ignoringOtherApps: true)
         controller.checkForUpdates(nil)
     }

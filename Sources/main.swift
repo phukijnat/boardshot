@@ -7,11 +7,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let settings = SettingsWindowController()
     private let corner = CornerThumb()
     private var signalSources: [DispatchSourceSignal] = []
+    private var onboarding: OnboardingController?
 
     static let folder = FileManager.default.homeDirectoryForCurrentUser
         .appendingPathComponent("Pictures/\(AppInfo.name)", isDirectory: true)
 
     func applicationDidFinishLaunching(_ note: Notification) {
+        // Screenshots of the first-launch window for docs: touches nothing else.
+        if let state = ProcessInfo.processInfo.environment["BOARDSHOT_ONBOARDING_PREVIEW"] {
+            OnboardingPreview.show(state)
+            return
+        }
+
         // Only one copy at a time: two copies would fight over the system
         // screenshot settings. Show the running one's panel and quit this one.
         if let other = NSRunningApplication.runningApplications(
@@ -23,10 +30,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             return
         }
 
+        // Decide before Sparkle marks this launch (see needsOnboarding).
+        let firstRun = Prefs.needsOnboarding()
+
         store = ShotStore(folder: Self.folder)
         ExitGuard.start()
         restoreOnSignals()
-        applyManageSetting()
+        // First run: change no macOS setting until the user agrees.
+        if !firstRun {
+            applyManageSetting()
+            Updater.shared.start()
+        } else if ScreencaptureSettings.hasSavedOriginals {
+            applyManageSetting()   // agreed in step 1 last time, then closed the window early
+        } else {
+            ExitGuard.arm(nil)
+        }
         panel = PanelController(store: store)
 
         HotKey.shared.action = { [weak self] in self?.panel.toggle() }
@@ -40,16 +58,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // the Boardshot window opens.
         panel.onWillShow = { [weak self] in self?.corner.hide() }
         corner.onClick = { [weak self] url in self?.panel.show(selecting: url) }
-        store.onNewShot = { [weak self] shot in self?.showCorner(for: shot) }
+        store.onNewShot = { [weak self] shot in
+            self?.showCorner(for: shot)
+            self?.tellOnboarding(about: shot)
+        }
 
         panel.onShowSettings = { [weak self] in self?.settings.show() }
         panel.onQuit = { NSApp.terminate(nil) }
         settings.onQuit = { NSApp.terminate(nil) }
         settings.onManageChanged = { [weak self] in self?.applyManageSetting() }
+        settings.onShowWelcome = { [weak self] in
+            self?.showOnboarding(shortcutWorks: HotKey.shared.register(Prefs.shortcut))
+        }
+        panel.onEnableManage = { [weak self] in
+            Prefs.manageScreenshots = true
+            self?.applyManageSetting()
+        }
         NotificationCenter.default.addObserver(self, selector: #selector(prefsChanged),
                                                name: .prefsChanged, object: nil)
 
-        if !ok {
+        if firstRun {
+            showOnboarding(shortcutWorks: ok)   // says so there if the shortcut is taken
+        } else if !ok {
             let a = NSAlert()
             a.messageText = tr("ใช้ปุ่ม \(Prefs.shortcut.display) ไม่ได้", "Can't use \(Prefs.shortcut.display)")
             a.informativeText = tr("มีแอปอื่นใช้ปุ่มนี้อยู่ เปลี่ยนได้ในหน้าตั้งค่า",
@@ -67,7 +97,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func applicationWillTerminate(_ note: Notification) { putBackThumbnail() }
 
     private func putBackThumbnail() {
-        guard store != nil, Prefs.manageScreenshots, !Prefs.thumbStyle.systemThumbnail else { return }
+        // Only when Boardshot really turned it off (not before the user agreed).
+        guard store != nil, Prefs.manageScreenshots, !Prefs.thumbStyle.systemThumbnail,
+              ScreencaptureSettings.hasSavedOriginals else { return }
         ScreencaptureSettings.restoreThumbnail()
     }
 
@@ -106,6 +138,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                     self.showCorner(for: shot, retry: false)
                 }
             }
+        }
+    }
+
+    private func showOnboarding(shortcutWorks: Bool) {
+        let o = onboarding ?? OnboardingController()
+        onboarding = o
+        o.shortcutWorks = shortcutWorks
+        o.onKeep = { [weak self] in
+            Prefs.manageScreenshots = true
+            self?.applyManageSetting()
+        }
+        o.onDecline = { [weak self] in
+            Prefs.manageScreenshots = false
+            self?.applyManageSetting()   // puts originals back only if Boardshot had changed them
+        }
+        o.onThumbChanged = { [weak self] in self?.applyManageSetting() }
+        o.onShowSettings = { [weak self] in self?.settings.show() }
+        o.autoUpdateOn = Prefs.onboardingDone ? Updater.shared.automaticallyChecks : true
+        o.onFinish = { [weak self] openPanel, autoUpdate in
+            // Setting this first means Sparkle has nothing left to ask.
+            Updater.shared.automaticallyChecks = autoUpdate
+            Updater.shared.start()
+            if openPanel { self?.panel.show() }
+        }
+        o.show()
+    }
+
+    private func tellOnboarding(about shot: Shot) {
+        guard let o = onboarding, o.isVisible else { return }
+        store.thumbnail(for: shot.url, size: CGSize(width: 520, height: 260)) { img in
+            if let img = img ?? NSImage(contentsOf: shot.url) { o.shotArrived(img) }
         }
     }
 

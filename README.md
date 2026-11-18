@@ -34,6 +34,7 @@ Take a screenshot the way you always do, press `⇧⌘Space`, and drag it straig
 1. [Download **Boardshot.dmg**](https://github.com/phukijnat/boardshot/releases/latest/download/Boardshot.dmg) (always the newest version). Older versions are on the [Releases](https://github.com/phukijnat/boardshot/releases) page.
 2. Open it and drag **Boardshot** into **Applications**.
 3. Open Boardshot from Applications.
+4. A welcome window asks before Boardshot changes any screenshot setting, lets you pick the thumbnail, has you try one screenshot, and offers to open Boardshot at login. You can see it again from **Settings → Show Welcome Again**.
 
 ### "Apple could not verify Boardshot…"
 Boardshot isn't notarized by Apple (that needs a paid developer account), so macOS blocks it the first time. Click **Done**, not Move to Trash:
@@ -74,10 +75,11 @@ Open from the menu bar icon → **Settings…**, the **⋯** button in the panel
 - Open at login
 - Show the menu bar icon
 - Check for updates automatically, or **Check Now**
+- **Show Welcome Again**: the first-launch window
 
 ## What Boardshot changes on your Mac
 
-To redirect screenshots, Boardshot changes system settings in `com.apple.screencapture`: the save folder (`location`, plus `location-screenshot` and `location-screenrecording`, which macOS 27 is expected to use) and `show-thumbnail`. It remembers your original values and puts them back when you untick **Keep screenshots in Boardshot**. Quitting the app, or the app crashing, puts back only the macOS thumbnail, so you still see your captures; screenshots keep going to `~/Pictures/Boardshot`.
+Only after you agree in the welcome window (or tick **Keep screenshots in Boardshot**), Boardshot changes system settings in `com.apple.screencapture`: the save folder (`location`, plus `location-screenshot` and `location-screenrecording`, which macOS 27 is expected to use) and `show-thumbnail`. It remembers your original values and puts them back when you untick **Keep screenshots in Boardshot**. Quitting the app, or the app crashing, puts back only the macOS thumbnail, so you still see your captures; screenshots keep going to `~/Pictures/Boardshot`.
 
 ## FAQ
 

@@ -21,6 +21,7 @@ Note: running the app changes your screenshot location (see the README). Untick 
 | `Sources/main.swift` | App delegate, menu bar menu |
 | `Sources/Panel.swift` | The screenshot panel |
 | `Sources/ShotStore.swift` | Watches the screenshot folder |
+| `Sources/Onboarding.swift` | First-launch window (asks before changing settings, thumbnail choice, try a screenshot) |
 | `Sources/ExitGuard.swift` | Puts the macOS thumbnail back if Boardshot crashes or is force quit |
 | `Sources/CornerThumb.swift` | Corner thumbnail after a capture |
 | `Sources/ScreencaptureSettings.swift` | Reads/writes `com.apple.screencapture` and restores originals |
@@ -29,6 +30,16 @@ Note: running the app changes your screenshot location (see the README). Untick 
 | `Sources/Updater.swift` | Sparkle updates |
 
 All UI text goes through `tr("ไทย", "English")`, so please add both languages.
+
+## First-launch window
+
+To check how a step looks without resetting your settings, run the built binary with a preview state. It changes no setting and prints the window number for `screencapture -l`:
+
+```bash
+BOARDSHOT_ONBOARDING_PREVIEW=thumbnail BOARDSHOT_PREVIEW_LANG=th build/Boardshot.app/Contents/MacOS/Boardshot
+```
+
+States: `welcome`, `confirm`, `thumbnail`, `try`, `try-done`, `done`, `done-declined`, `done-approval`. Add `BOARDSHOT_PREVIEW_DARK=1` for dark mode. To go through it for real, use **Settings → Show Welcome Again**.
 
 ## README demo GIF
 
