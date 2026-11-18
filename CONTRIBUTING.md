@@ -29,6 +29,16 @@ Note: running the app changes your screenshot location (see the README). Untick 
 
 All UI text goes through `tr("ไทย", "English")`, so please add both languages.
 
+## README demo GIF
+
+`docs/demo.gif` is generated, not recorded. If you change how the panel looks, rebuild it and commit the new GIF:
+
+```bash
+./tools/demo/make_demo.sh
+```
+
+The panel in the clip is drawn by the real `Panel.swift`; the desktop, windows and cursor around it come from `tools/demo/main.swift`. Still frames for checking land in `build/demo/`.
+
 ## Making a release (maintainers)
 
 Needs the update-signing key in your Keychain (account `boardshot`, made with `vendor/Sparkle/bin/generate_keys --account boardshot`). **Back it up**: `vendor/Sparkle/bin/generate_keys --account boardshot -x boardshot-key.txt`, store the file somewhere safe and offline, then delete it. If the key is lost, existing users can no longer receive updates.
