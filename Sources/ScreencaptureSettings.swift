@@ -8,42 +8,62 @@ import Foundation
 /// thumbnail, so captures still show feedback; screenshots keep going to the folder.
 enum ScreencaptureSettings {
     private static let domain = "com.apple.screencapture"
-    private static let keys = ["location", "show-thumbnail"]
+    /// macOS 26 and earlier read "location" for screenshots and recordings.
+    /// macOS 27 reportedly reads "location-screenshot" and
+    /// "location-screenrecording" instead (not yet checked on 27), so all three
+    /// are written on every version; older ones ignore the new keys.
+    private static let folderKeys = ["location", "location-screenshot", "location-screenrecording"]
+    private static let thumbKey = "show-thumbnail"
+    private static let keys = folderKeys + [thumbKey]
 
     // Our own storage for the user's original values.
     private static let store = UserDefaults.standard
-    private static let savedFlag = "originalsSaved"
     private static func savedKey(_ k: String) -> String { "original." + k }
+    private static func savedMark(_ k: String) -> String { "originalSaved." + k }
+    /// Versions before 0.2.3 marked "location" and "show-thumbnail" saved with one flag.
+    private static let legacyFlag = "originalsSaved"
+    private static let legacyKeys: Set<String> = ["location", "show-thumbnail"]
+
+    private static func isSaved(_ k: String) -> Bool {
+        store.bool(forKey: savedMark(k)) || (legacyKeys.contains(k) && store.bool(forKey: legacyFlag))
+    }
 
     static func apply(folder: URL, systemThumbnail: Bool) {
         // Already set up: don't restart the system UI on every launch.
-        let locationChanges = read("location") != folder.path
-        if !locationChanges, read("show-thumbnail") == (systemThumbnail ? "1" : "0") { return }
+        let stale = folderKeys.filter { read($0) != folder.path }
+        if stale.isEmpty, read(thumbKey) == (systemThumbnail ? "1" : "0") { return }
 
-        // Only remember originals once, so they stay the user's real values.
-        if !store.bool(forKey: savedFlag) {
-            for k in keys {
-                if let v = read(k) { store.set(v, forKey: savedKey(k)) }
-                else { store.removeObject(forKey: savedKey(k)) }
+        // Remember each original once, so it stays the user's real value. Keys
+        // added later are saved the first time they're seen; our own folder is
+        // never taken as an original (macOS 27 may carry "location" over).
+        for k in keys where !isSaved(k) {
+            if let v = read(k), !(folderKeys.contains(k) && v == folder.path) {
+                store.set(v, forKey: savedKey(k))
+            } else {
+                store.removeObject(forKey: savedKey(k))
             }
-            store.set(true, forKey: savedFlag)
+            store.set(true, forKey: savedMark(k))
         }
-        defaults(["write", domain, "location", "-string", folder.path])
-        defaults(["write", domain, "show-thumbnail", "-bool", systemThumbnail ? "true" : "false"])
+        for k in stale { defaults(["write", domain, k, "-string", folder.path]) }
+        defaults(["write", domain, thumbKey, "-bool", systemThumbnail ? "true" : "false"])
         // Restarting the system UI blocks screenshots for a few seconds, so only
-        // do it when the folder changes. The thumbnail setting is read on each
-        // capture and applies without a restart.
-        if locationChanges { refreshSystemUI() }
+        // do it when a folder this macOS reads changes. The thumbnail setting is
+        // read on each capture and applies without a restart.
+        if stale.contains(where: { $0 == "location" || isMacOS27 }) { refreshSystemUI() }
     }
 
     /// Puts back what the user had before Boardshot. If nothing was saved,
     /// falls back to the macOS defaults (Desktop, thumbnail on).
     static func restore() {
+        // A new folder key with no original of its own (it held our folder, or
+        // didn't exist yet) follows the user's original "location".
+        let legacyFolder = isSaved("location") ? store.string(forKey: savedKey("location")) : nil
         for k in keys {
-            if store.bool(forKey: savedFlag), let v = store.string(forKey: savedKey(k)) {
-                if k == "show-thumbnail" {
-                    let on = (v == "1" || v.lowercased() == "true")
-                    defaults(["write", domain, k, "-bool", on ? "true" : "false"])
+            let own = isSaved(k) ? store.string(forKey: savedKey(k)) : nil
+            let fallback = (k != "location" && folderKeys.contains(k)) ? legacyFolder : nil
+            if let v = own ?? fallback {
+                if k == thumbKey {
+                    defaults(["write", domain, k, "-bool", isOn(v) ? "true" : "false"])
                 } else {
                     defaults(["write", domain, k, "-string", v])
                 }
@@ -51,21 +71,30 @@ enum ScreencaptureSettings {
                 defaults(["delete", domain, k])
             }
             store.removeObject(forKey: savedKey(k))
+            store.removeObject(forKey: savedMark(k))
         }
-        store.set(false, forKey: savedFlag)
+        store.removeObject(forKey: legacyFlag)
         refreshSystemUI()
     }
 
-    /// Puts back only the user's original `show-thumbnail` (macOS default: on),
-    /// keeping the folder and the saved originals. Used on quit, when Boardshot's
-    /// own corner thumbnail goes away. No system UI restart: the thumbnail
-    /// setting applies on the next capture.
+    /// The user's own `show-thumbnail` from before Boardshot (macOS default: on).
+    static var originalThumbnail: Bool {
+        guard isSaved(thumbKey), let v = store.string(forKey: savedKey(thumbKey)) else { return true }
+        return isOn(v)
+    }
+
+    /// Puts back only the user's original `show-thumbnail`, keeping the folder
+    /// and the saved originals. Used on quit, when Boardshot's own corner
+    /// thumbnail goes away. No system UI restart: the thumbnail setting applies
+    /// on the next capture.
     static func restoreThumbnail() {
-        var on = true
-        if store.bool(forKey: savedFlag), let v = store.string(forKey: savedKey("show-thumbnail")) {
-            on = (v == "1" || v.lowercased() == "true")
-        }
-        defaults(["write", domain, "show-thumbnail", "-bool", on ? "true" : "false"])
+        defaults(["write", domain, thumbKey, "-bool", originalThumbnail ? "true" : "false"])
+    }
+
+    private static func isOn(_ v: String) -> Bool { v == "1" || v.lowercased() == "true" }
+
+    private static var isMacOS27: Bool {
+        ProcessInfo.processInfo.isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 27, minorVersion: 0, patchVersion: 0))
     }
 
     private static func read(_ key: String) -> String? {

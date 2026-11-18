@@ -4,7 +4,8 @@
 
 ## 0.2.3
 
-- Quitting Boardshot brings back the macOS thumbnail, so a screenshot taken while the app is closed no longer looks like it failed. Screenshots still go to `~/Pictures/Boardshot`.
+- Quitting Boardshot brings back the macOS thumbnail, so a screenshot taken while the app is closed no longer looks like it failed. Screenshots still go to `~/Pictures/Boardshot`. This also works if Boardshot crashes or is force quit.
+- Ready for macOS 27, which is expected to read the screenshot folder from new settings.
 
 ## 0.2.2
 

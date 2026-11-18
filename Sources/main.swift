@@ -6,6 +6,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var panel: PanelController!
     private let settings = SettingsWindowController()
     private let corner = CornerThumb()
+    private var signalSources: [DispatchSourceSignal] = []
 
     static let folder = FileManager.default.homeDirectoryForCurrentUser
         .appendingPathComponent("Pictures/\(AppInfo.name)", isDirectory: true)
@@ -23,6 +24,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
 
         store = ShotStore(folder: Self.folder)
+        ExitGuard.start()
+        restoreOnSignals()
         applyManageSetting()
         panel = PanelController(store: store)
 
@@ -60,9 +63,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// Our corner thumbnail goes away with the app, so give the macOS one back;
     /// otherwise a capture after quitting shows nothing. The next launch turns it
     /// off again. (Not reached by the duplicate copy, which quits with exit(0).)
-    func applicationWillTerminate(_ note: Notification) {
+    /// Crashes and Force Quit are covered by `ExitGuard`.
+    func applicationWillTerminate(_ note: Notification) { putBackThumbnail() }
+
+    private func putBackThumbnail() {
         guard store != nil, Prefs.manageScreenshots, !Prefs.thumbStyle.systemThumbnail else { return }
         ScreencaptureSettings.restoreThumbnail()
+    }
+
+    /// A plain `kill` (and Ctrl-C, hang-up) ends a Cocoa app without
+    /// `applicationWillTerminate`, so catch those signals and put the
+    /// thumbnail back first. Not routed through NSApp.terminate, which can
+    /// wait behind a modal alert.
+    private func restoreOnSignals() {
+        for sig in [SIGTERM, SIGINT, SIGHUP] {
+            signal(sig, SIG_IGN)
+            let source = DispatchSource.makeSignalSource(signal: sig, queue: .main)
+            source.setEventHandler { [self] in
+                putBackThumbnail()
+                exit(0)
+            }
+            source.resume()
+            signalSources.append(source)
+        }
     }
 
     /// Opening the app again (Finder, Spotlight, `open`) shows the panel.
@@ -92,6 +115,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             ScreencaptureSettings.apply(folder: Self.folder, systemThumbnail: Prefs.thumbStyle.systemThumbnail)
         }
         else { ScreencaptureSettings.restore() }
+        let managedThumb = Prefs.manageScreenshots && !Prefs.thumbStyle.systemThumbnail
+        ExitGuard.arm(managedThumb ? ScreencaptureSettings.originalThumbnail : nil)
     }
 
     @objc private func prefsChanged() { rebuildMenu() }

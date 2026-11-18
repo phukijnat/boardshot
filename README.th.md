@@ -77,7 +77,7 @@ Boardshot ยังไม่ได้ผ่านการตรวจ (notarize
 
 ## Boardshot เปลี่ยนอะไรในเครื่อง
 
-แอปเปลี่ยนค่าระบบ 2 ค่า (`com.apple.screencapture`: `location` กับ `show-thumbnail`) และจำค่าเดิมไว้ เอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออกเมื่อไหร่ก็คืนค่าเดิมให้ ส่วนการปิดแอปจะคืนแค่รูปเล็กของ macOS ให้ยังเห็นว่าแคปติด ภาพยังเข้า `~/Pictures/Boardshot` เหมือนเดิม
+แอปเปลี่ยนค่าระบบใน `com.apple.screencapture` คือโฟลเดอร์เก็บภาพ (`location` รวมถึง `location-screenshot` และ `location-screenrecording` ที่คาดว่า macOS 27 จะใช้) กับ `show-thumbnail` และจำค่าเดิมไว้ เอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออกเมื่อไหร่ก็คืนค่าเดิมให้ ส่วนการปิดแอป หรือแอป crash จะคืนแค่รูปเล็กของ macOS ให้ยังเห็นว่าแคปติด ภาพยังเข้า `~/Pictures/Boardshot` เหมือนเดิม
 
 ## คำถามที่พบบ่อย
 
@@ -101,7 +101,7 @@ Boardshot จำค่านั้นไว้ และคืนให้เม
 ถ้าลบแอปไปก่อนแล้ว คืนค่าเองได้ด้วยคำสั่งนี้:
 
 ```bash
-defaults delete com.apple.screencapture location; defaults delete com.apple.screencapture show-thumbnail; killall SystemUIServer
+for k in location location-screenshot location-screenrecording show-thumbnail; do defaults delete com.apple.screencapture $k; done; killall SystemUIServer
 ```
 
 รูปที่ถ่ายไว้ยังอยู่ที่ `~/Pictures/Boardshot`

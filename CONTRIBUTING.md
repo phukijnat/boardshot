@@ -21,6 +21,7 @@ Note: running the app changes your screenshot location (see the README). Untick 
 | `Sources/main.swift` | App delegate, menu bar menu |
 | `Sources/Panel.swift` | The screenshot panel |
 | `Sources/ShotStore.swift` | Watches the screenshot folder |
+| `Sources/ExitGuard.swift` | Puts the macOS thumbnail back if Boardshot crashes or is force quit |
 | `Sources/CornerThumb.swift` | Corner thumbnail after a capture |
 | `Sources/ScreencaptureSettings.swift` | Reads/writes `com.apple.screencapture` and restores originals |
 | `Sources/SettingsWindow.swift` | Settings window |
