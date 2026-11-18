@@ -4,6 +4,19 @@
     <title>Boardshot</title>
     <!-- ITEMS -->
     <item>
+      <title>0.2.1</title>
+      <pubDate>Wed, 18 Nov 2026 08:43:01 +0000</pubDate>
+      <sparkle:version>201</sparkle:version>
+      <sparkle:shortVersionString>0.2.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul>
+<li>Choose the thumbnail after capture (Settings → Screenshots): Boardshot's (file saved right away), the macOS one (with its Markup editor; the file arrives once the thumbnail goes away, and macOS may not show it for captures on a second display), or none.</li>
+<li>Opening a second copy of Boardshot now brings up the one already running instead of running both.</li>
+</ul>
+]]></description>
+      <enclosure url="https://github.com/phukijnat/boardshot/releases/download/v0.2.1/Boardshot-0.2.1.dmg" length="1460974" type="application/octet-stream" sparkle:edSignature="GOSgqTijNWOKrKeAZiSPjLvTDcB8+8ZXuIJ4420989brhYDww6gVZYhcGhuneM1s1SBqzz5W8Wb3SbFktu35CQ=="/>
+    </item>
+    <item>
       <title>0.2.0</title>
       <pubDate>Tue, 17 Nov 2026 18:15:24 +0000</pubDate>
       <sparkle:version>200</sparkle:version>
