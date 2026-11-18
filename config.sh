@@ -6,7 +6,7 @@ BUNDLE_ID="io.github.phukijnat.boardshot"
 GITHUB_REPO="phukijnat/boardshot"
 
 # Version shown to users (CFBundleShortVersionString). release.sh updates this line.
-VERSION="0.2.0"
+VERSION="0.2.1"
 
 # Where the app looks for updates. Can be overridden for local testing:
 #   FEED_URL=http://localhost:8000/appcast.xml ./build.sh
