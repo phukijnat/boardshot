@@ -16,7 +16,8 @@ enum ScreencaptureSettings {
 
     static func apply(folder: URL, systemThumbnail: Bool) {
         // Already set up: don't restart the system UI on every launch.
-        if read("location") == folder.path, read("show-thumbnail") == (systemThumbnail ? "1" : "0") { return }
+        let locationChanges = read("location") != folder.path
+        if !locationChanges, read("show-thumbnail") == (systemThumbnail ? "1" : "0") { return }
 
         // Only remember originals once, so they stay the user's real values.
         if !store.bool(forKey: savedFlag) {
@@ -28,7 +29,10 @@ enum ScreencaptureSettings {
         }
         defaults(["write", domain, "location", "-string", folder.path])
         defaults(["write", domain, "show-thumbnail", "-bool", systemThumbnail ? "true" : "false"])
-        refreshSystemUI()
+        // Restarting the system UI blocks screenshots for a few seconds, so only
+        // do it when the folder changes. The thumbnail setting is read on each
+        // capture and applies without a restart.
+        if locationChanges { refreshSystemUI() }
     }
 
     /// Puts back what the user had before Boardshot. If nothing was saved,
