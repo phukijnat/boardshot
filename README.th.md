@@ -12,7 +12,7 @@
   [English](README.md) · ภาษาไทย
 </div>
 
-<!-- TODO: ใส่ภาพหน้าจอหรือ GIF ของหน้าต่าง Boardshot: docs/screenshot.png -->
+<p align="center"><img src="docs/demo.gif" width="800" alt="ถ่ายจอ กด Shift-Command-Space แล้วลากภาพไปวางในแชต"></p>
 
 ถ่ายจอแบบที่ทำอยู่ทุกวัน กด `⇧⌘Space` แล้วลากภาพไปวางใน Slack, Figma, แชต หรือ issue ได้เลย ไม่ต้องเปิด Finder หาไฟล์ Boardshot อยู่บนแถบเมนู เก็บทุกภาพไว้ในโฟลเดอร์เดียว และได้ Desktop ที่สะอาดเป็นของแถม
 

@@ -12,7 +12,7 @@
   English · [ภาษาไทย](README.th.md)
 </div>
 
-<!-- TODO: hero screenshot or GIF of the panel: docs/screenshot.png -->
+<p align="center"><img src="docs/demo.gif" width="800" alt="Take a screenshot, press Shift-Command-Space, drag it into a chat"></p>
 
 Take a screenshot the way you always do, press `⇧⌘Space`, and drag it straight into Slack, Figma, a chat or an issue. No digging through Finder. Boardshot lives in your menu bar, keeps every shot in one folder, and keeps your Desktop clean as a bonus.
 
