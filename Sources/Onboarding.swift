@@ -25,6 +25,11 @@ final class OnboardingController: NSObject, NSWindowDelegate {
     private var captured: NSImage?
     private var loginOn: Bool
     private var loginNeedsApproval = false
+    /// Screenshots macOS left in the old folder (usually the Desktop), offered
+    /// on the last step so the window isn't empty the first time.
+    private var importable: [URL] = []
+    private var importScanned = false
+    private var importOn = true
 
     private let width: CGFloat = 600
     private let height: CGFloat = 500
@@ -143,8 +148,8 @@ final class OnboardingController: NSObject, NSWindowDelegate {
 
         let box = Box(views: [
             heading(tr("ให้ \(AppInfo.name) เก็บ screenshot ไหม?", "Let \(AppInfo.name) keep your screenshots?"), size: 14),
-            text(tr("\(AppInfo.name) แสดงได้เฉพาะภาพในโฟลเดอร์ของมัน (~/Pictures/\(AppInfo.name)) จึงต้องเปลี่ยนที่เก็บ screenshot ของ Mac มาไว้ที่นี่ และปิดรูปเล็กของ Mac เพื่อให้ภาพเข้าทันที เปลี่ยนกลับได้ตลอดในหน้าตั้งค่า แล้วค่าเดิมจะกลับมา",
-                    "\(AppInfo.name) can only show screenshots in its own folder (~/Pictures/\(AppInfo.name)), so it saves your Mac's screenshots there, and turns off the Mac's thumbnail so they land at once. You can switch back any time in Settings, and your old settings return."),
+            text(tr("\(AppInfo.name) แสดงได้เฉพาะภาพในโฟลเดอร์ของมัน (~/Pictures/\(AppInfo.name)) จึงต้องเปลี่ยนที่เก็บ screenshot ของ Mac มาไว้ที่นี่ และปิดรูปเล็กของ Mac เพื่อให้ภาพเข้าทันที เปลี่ยนกลับได้ตลอดในหน้าตั้งค่า และเมื่อปิดแอป ค่าเดิมจะกลับมา",
+                    "\(AppInfo.name) can only show screenshots in its own folder (~/Pictures/\(AppInfo.name)), so it saves your Mac's screenshots there, and turns off the Mac's thumbnail so they land at once. Turn it off in Settings, or quit the app, and your old settings return."),
                  width: width - 120),
         ])
         let body = column([
@@ -311,6 +316,16 @@ final class OnboardingController: NSObject, NSWindowDelegate {
                                target: self, action: #selector(updatesChanged(_:)))
         updates.state = autoUpdateOn ? .on : .off
         loginItems.append(updates)
+        if !declined, !importable.isEmpty {
+            let names = ScreencaptureSettings.userFolders(excluding: AppDelegate.folder)
+                .map { FileManager.default.displayName(atPath: $0.path) }.joined(separator: tr(" และ ", " and "))
+            let imp = NSButton(checkboxWithTitle: tr("นำเข้า \(importable.count) ไฟล์ที่ Mac แคปไว้จาก \(names)",
+                                                     "Import the \(importable.count) screenshots already in \(names)"),
+                               target: self, action: #selector(importChanged(_:)))
+            imp.state = importOn ? .on : .off
+            loginItems.insert(imp, at: 0)
+        }
+        scanForImportsOnce()
         let loginCol = NSStackView(views: loginItems)
         loginCol.orientation = .vertical
         loginCol.alignment = .leading
@@ -388,6 +403,29 @@ final class OnboardingController: NSObject, NSWindowDelegate {
     }
 
     @objc private func updatesChanged(_ sender: NSButton) { autoUpdateOn = sender.state == .on }
+    @objc private func importChanged(_ sender: NSButton) { importOn = sender.state == .on }
+
+    /// Looks once, when the last step first shows, then shows the checkbox if
+    /// anything turned up. Not for a preview or when the user said no.
+    private func scanForImportsOnce() {
+        guard !preview, !declined, !importScanned else { return }
+        importScanned = true
+        let folders = ScreencaptureSettings.userFolders(excluding: AppDelegate.folder)
+        Task { @MainActor [weak self] in
+            let found = await Sweep.find(in: folders)
+            guard let self else { return }
+            // Reading the Desktop may ask for permission first. macOS then
+            // gives focus back to the app before Boardshot, leaving this
+            // window behind it, so bring it forward again.
+            if self.isVisible {
+                NSApp.activate(ignoringOtherApps: true)
+                self.window?.makeKeyAndOrderFront(nil)
+            }
+            guard !found.isEmpty else { return }
+            self.importable = found
+            if self.step == .done { self.rebuild() }
+        }
+    }
 
     @objc private func openLoginItems() { SMAppService.openSystemSettingsLoginItems() }
 
@@ -405,6 +443,10 @@ final class OnboardingController: NSObject, NSWindowDelegate {
             } else if !loginOn, svc.status == .enabled || svc.status == .requiresApproval {
                 try? svc.unregister()
             }
+        }
+        if !preview, !declined, importOn, !importable.isEmpty {
+            _ = Sweep.move(importable.filter { FileManager.default.fileExists(atPath: $0.path) },
+                           to: AppDelegate.folder)
         }
         if !preview { Prefs.onboardingDone = true }
         window?.close()
@@ -650,7 +692,9 @@ private final class Card: NSView {
             return r
         }
 
-        let s = NSStackView(views: [icon, headRow, line("✓", style.pro, .systemGreen), line("–", style.con, .secondaryLabelColor)])
+        var lines = [icon, headRow, line("✓", style.pro, .systemGreen)]
+        if let con = style.con { lines.append(line("–", con, .secondaryLabelColor)) }
+        let s = NSStackView(views: lines)
         s.orientation = .vertical
         s.alignment = .leading
         s.spacing = 8

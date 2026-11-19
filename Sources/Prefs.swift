@@ -9,7 +9,7 @@ extension Notification.Name {
 enum ThumbStyle: String, CaseIterable {
     /// Boardshot's corner thumbnail. The file is saved right away.
     case boardshot
-    /// The macOS floating thumbnail, with its Markup editor. macOS only saves
+    /// The macOS floating thumbnail. macOS only saves
     /// the file once the thumbnail goes away (about 5 seconds, or a swipe).
     case macOS
     /// No thumbnail. The file is saved right away.
@@ -32,11 +32,11 @@ enum ThumbStyle: String, CaseIterable {
     var note: String {
         switch self {
         case .boardshot:
-            return tr("ขึ้นที่มุมขวาล่างของจอที่เมาส์อยู่ ไฟล์เข้าทันที",
-                      "Shows in the bottom-right of the screen the mouse is on. The file is saved right away.")
+            return tr("ขึ้นที่มุมขวาล่างของจอที่เมาส์อยู่ ไฟล์เข้าทันที คลิกเพื่อขีดเขียน (Markup) หรือตัดวิดีโอ คลิกขวาดูตัวเลือกอื่น",
+                      "Shows in the bottom-right of the screen the mouse is on. The file is saved right away. Click to mark it up or trim a recording; right-click for more.")
         case .macOS:
-            return tr("คลิกเพื่อแก้ไขด้วย Markup ของ Mac ได้ แต่ไฟล์จะเข้า \(AppInfo.name) หลังรูปเล็กหายไป (ราว 5 วินาที หรือปัดออกเพื่อให้เข้าทันที) และ macOS อาจไม่แสดงรูปเล็กเมื่อแคปจากจอที่สอง",
-                      "Click it to edit with the Mac's Markup. The file reaches \(AppInfo.name) only after the thumbnail goes away (about 5 seconds, or swipe it away to save now). macOS may not show it for captures on a second display.")
+            return tr("รูปเล็กของ Mac เอง ไฟล์จะเข้า \(AppInfo.name) หลังรูปเล็กหายไป (ราว 5 วินาที หรือปัดออกเพื่อให้เข้าทันที) และ macOS อาจไม่แสดงรูปเล็กเมื่อแคปจากจอที่สอง",
+                      "The Mac's own thumbnail. The file reaches \(AppInfo.name) only after the thumbnail goes away (about 5 seconds, or swipe it away to save now). macOS may not show it for captures on a second display.")
         case .none:
             return tr("ไม่มีรูปเล็ก ไฟล์เข้าทันที", "No thumbnail. The file is saved right away.")
         }
@@ -45,18 +45,18 @@ enum ThumbStyle: String, CaseIterable {
     /// What it's good at, in one short line (first-launch cards).
     var pro: String {
         switch self {
-        case .boardshot: return tr("ภาพเข้า \(AppInfo.name) ทันที คลิกเพื่อเปิดดู หรือลากไปใช้ได้เลย",
-                                   "Lands in \(AppInfo.name) instantly. Click to open it, or drag it straight into an app.")
-        case .macOS: return tr("คลิกเพื่อขีดเขียนหรือครอปภาพด้วย Markup ของ Mac",
-                               "Click to draw on it or crop it with the Mac's Markup.")
+        case .boardshot: return tr("ภาพเข้า \(AppInfo.name) ทันที ลากไปใช้ได้เลย คลิกเพื่อขีดเขียน (Markup) หรือตัดวิดีโอ คลิกขวาดูตัวเลือกอื่น",
+                                   "Lands in \(AppInfo.name) instantly. Drag it into an app, click to mark it up or trim a recording, right-click for more.")
+        case .macOS: return tr("หน้าตาแบบเดิมของ Mac ที่คุ้นเคย",
+                               "The Mac's own, as you know it.")
         case .none: return tr("ไม่มีอะไรเด้งขึ้นมา ภาพเข้าทันที", "Nothing pops up. Lands right away.")
         }
     }
 
-    /// What you give up, in one short line (first-launch cards).
-    var con: String {
+    /// What you give up, in one short line (first-launch cards); nil if nothing.
+    var con: String? {
         switch self {
-        case .boardshot: return tr("ไม่มีเครื่องมือขีดเขียน", "No drawing tools.")
+        case .boardshot: return nil
         case .macOS: return tr("ภาพเข้าช้าราว 5 วินาที หรือจนกว่าจะปัดรูปเล็กทิ้ง และอาจไม่ขึ้นเมื่อแคปจากจอที่สอง",
                                "Lands about 5 seconds later, or once you swipe it away. May not show on a second display.")
         case .none: return tr("ไม่เห็นว่าแคปติดหรือยัง", "No sign the capture worked.")
