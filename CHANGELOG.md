@@ -2,6 +2,11 @@
 
 `release.sh` turns the bullet list under each version into the release notes users see in the update window.
 
+## 0.3.1
+
+- Fixed: if your Mac was set to save screenshots to the clipboard, Preview or another app (⇧⌘5 → Options), they never reached Boardshot and the window stayed empty. Boardshot now saves them as files, and puts your choice back when you untick **Keep screenshots in Boardshot**.
+- Turning Boardshot's screenshot folder on or off no longer restarts the menu bar, so screenshots keep working while it switches.
+
 ## 0.3.0
 
 - A welcome window on first launch. Boardshot now asks before changing your screenshot settings, explains the two thumbnails so you can pick one, has you try a screenshot, and offers to open at login. See it again from Settings → Show Welcome Again.

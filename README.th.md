@@ -79,7 +79,7 @@ Boardshot ยังไม่ได้ผ่านการตรวจ (notarize
 
 ## Boardshot เปลี่ยนอะไรในเครื่อง
 
-หลังจากคุณตกลงในหน้าต้อนรับ (หรือติ๊ก "เก็บ screenshot ไว้ที่ Boardshot") แอปจะเปลี่ยนค่าระบบใน `com.apple.screencapture` คือโฟลเดอร์เก็บภาพ (`location` รวมถึง `location-screenshot` และ `location-screenrecording` ที่คาดว่า macOS 27 จะใช้) กับ `show-thumbnail` และจำค่าเดิมไว้ เอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออกเมื่อไหร่ก็คืนค่าเดิมให้ ส่วนการปิดแอป หรือแอป crash จะคืนแค่รูปเล็กของ macOS ให้ยังเห็นว่าแคปติด ภาพยังเข้า `~/Pictures/Boardshot` เหมือนเดิม
+หลังจากคุณตกลงในหน้าต้อนรับ (หรือติ๊ก "เก็บ screenshot ไว้ที่ Boardshot") แอปจะเปลี่ยนค่าระบบใน `com.apple.screencapture` คือโฟลเดอร์เก็บภาพ (`location` รวมถึง `location-screenshot` และ `location-screenrecording` ที่คาดว่า macOS 27 จะใช้), ปลายทางของภาพ (`target`, `target-screenshot` และ `target-screenrecording` ตั้งให้บันทึกเป็นไฟล์ เพราะภาพที่ส่งไป clipboard หรือ Preview จะไม่เข้า Boardshot) กับ `show-thumbnail` โดยไม่ต้องรีสตาร์ตอะไร แคปจอได้ตลอดระหว่างเปลี่ยน และจำค่าเดิมไว้ เอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออกเมื่อไหร่ก็คืนค่าเดิมให้ ส่วนการปิดแอป หรือแอป crash จะคืนแค่รูปเล็กของ macOS ให้ยังเห็นว่าแคปติด ภาพยังเข้า `~/Pictures/Boardshot` เหมือนเดิม
 
 ## คำถามที่พบบ่อย
 
@@ -103,7 +103,7 @@ Boardshot จำค่านั้นไว้ และคืนให้เม
 ถ้าลบแอปไปก่อนแล้ว คืนค่าเองได้ด้วยคำสั่งนี้:
 
 ```bash
-for k in location location-screenshot location-screenrecording show-thumbnail; do defaults delete com.apple.screencapture $k; done; killall SystemUIServer
+for k in location location-screenshot location-screenrecording target target-screenshot target-screenrecording show-thumbnail; do defaults delete com.apple.screencapture $k; done
 ```
 
 รูปที่ถ่ายไว้ยังอยู่ที่ `~/Pictures/Boardshot`

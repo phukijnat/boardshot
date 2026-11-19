@@ -79,7 +79,7 @@ Open from the menu bar icon → **Settings…**, the **⋯** button in the panel
 
 ## What Boardshot changes on your Mac
 
-Only after you agree in the welcome window (or tick **Keep screenshots in Boardshot**), Boardshot changes system settings in `com.apple.screencapture`: the save folder (`location`, plus `location-screenshot` and `location-screenrecording`, which macOS 27 is expected to use) and `show-thumbnail`. It remembers your original values and puts them back when you untick **Keep screenshots in Boardshot**. Quitting the app, or the app crashing, puts back only the macOS thumbnail, so you still see your captures; screenshots keep going to `~/Pictures/Boardshot`.
+Only after you agree in the welcome window (or tick **Keep screenshots in Boardshot**), Boardshot changes system settings in `com.apple.screencapture`: the save folder (`location`, plus `location-screenshot` and `location-screenrecording`, which macOS 27 is expected to use), where captures are saved (`target`, `target-screenshot` and `target-screenrecording` set to a file, since Boardshot can't see captures sent to the clipboard or Preview) and `show-thumbnail`. Nothing is restarted, so screenshots keep working while this happens. It remembers your original values and puts them back when you untick **Keep screenshots in Boardshot**. Quitting the app, or the app crashing, puts back only the macOS thumbnail, so you still see your captures; screenshots keep going to `~/Pictures/Boardshot`.
 
 ## FAQ
 
@@ -103,7 +103,7 @@ Notarization needs a paid Apple developer account. The app is open source and yo
 If you already deleted the app, restore the macOS defaults with:
 
 ```bash
-for k in location location-screenshot location-screenrecording show-thumbnail; do defaults delete com.apple.screencapture $k; done; killall SystemUIServer
+for k in location location-screenshot location-screenrecording target target-screenshot target-screenrecording show-thumbnail; do defaults delete com.apple.screencapture $k; done
 ```
 
 Your screenshots stay in `~/Pictures/Boardshot`.
