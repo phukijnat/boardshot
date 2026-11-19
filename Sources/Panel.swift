@@ -152,11 +152,16 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
     private var folderBtn: NSButton!
     private var settingsBtn: NSButton!
     private var clearBtn: NSButton!
+    private var importBtn: NSButton!
+    /// Screenshots waiting in the old folder, found when the panel opens.
+    private var importable: [URL] = []
     private var header: NSView!
     private let confirmBar = NSStackView()
     private let confirmLabel = NSTextField(labelWithString: "")
     private let confirmNo = NSButton(title: "", target: nil, action: nil)
     private let confirmYes = NSButton(title: "", target: nil, action: nil)
+    /// What the confirm bar's Yes button does.
+    private var confirmAction: (() -> Void)?
     var onShowSettings: (() -> Void)?
     var onQuit: (() -> Void)?
     /// Turns "Keep screenshots in Boardshot" on, from the empty panel.
@@ -189,6 +194,7 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
     func show(selecting url: URL? = nil) {
         onWillShow?()
         store.reload()
+        scanForImports()
         if let url, let i = store.shots.firstIndex(where: { $0.url == url }) {
             grid.selectionIndexPaths = [IndexPath(item: i, section: 0)]
         }
@@ -207,7 +213,7 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
 
     func hide() {
         cancelHover()
-        if isConfirmingWipe { cancelWipe() }
+        if isConfirming { closeConfirmBar() }
         panel.orderOut(nil)
         grid.deselectAll(nil)
     }
@@ -228,7 +234,7 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
         panel.minSize = NSSize(width: 420, height: 300)
         panel.onCancel = { [weak self] in
             guard let self else { return }
-            if self.isConfirmingWipe { self.cancelWipe() } else { self.hide() } // Esc
+            if self.isConfirming { self.closeConfirmBar() } else { self.hide() } // Esc
         }
         NotificationCenter.default.addObserver(self, selector: #selector(resigned),
                                                name: NSWindow.didResignKeyNotification, object: panel)
@@ -260,8 +266,17 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
         clearBtn = NSButton(image: NSImage(systemSymbolName: "trash", accessibilityDescription: "Clear all")!,
                             target: self, action: #selector(wipeAllShots))
         clearBtn.isBordered = false
+        // Shown only while the old folder holds screenshots, saying how many.
+        importBtn = NSButton(title: "", image: NSImage(systemSymbolName: "square.and.arrow.down",
+                                                       accessibilityDescription: "Import")!,
+                             target: self, action: #selector(importOldShots))
+        importBtn.bezelStyle = .rounded
+        importBtn.controlSize = .small
+        importBtn.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+        importBtn.imagePosition = .imageLeading
+        importBtn.isHidden = true
 
-        let header = DragHeader(views: [title, countLabel, NSView(), hint, clearBtn, folderBtn, settingsBtn])
+        let header = DragHeader(views: [title, countLabel, NSView(), hint, importBtn, clearBtn, folderBtn, settingsBtn])
         header.orientation = .horizontal
         header.spacing = 8
         header.edgeInsets = NSEdgeInsets(top: 0, left: 16, bottom: 0, right: 12)
@@ -309,14 +324,12 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
         confirmLabel.lineBreakMode = .byTruncatingTail
         confirmLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         confirmNo.target = self
-        confirmNo.action = #selector(cancelWipe)
+        confirmNo.action = #selector(closeConfirmBar)
         confirmNo.bezelStyle = .rounded
         confirmNo.keyEquivalent = "\u{1b}"
         confirmYes.target = self
-        confirmYes.action = #selector(confirmWipe)
+        confirmYes.action = #selector(confirmBarYes)
         confirmYes.bezelStyle = .rounded
-        confirmYes.hasDestructiveAction = true
-        confirmYes.bezelColor = .systemRed
         confirmYes.keyEquivalent = "\r"
         confirmBar.setViews([confirmLabel, NSView(), confirmNo, confirmYes], in: .leading)
         confirmBar.orientation = .horizontal
@@ -387,6 +400,12 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
         folderBtn.toolTip = tr("เปิดโฟลเดอร์ใน Finder", "Show folder in Finder")
         settingsBtn.toolTip = tr("ตั้งค่า (⌘,)", "Settings (⌘,)")
         clearBtn.toolTip = tr("ลบรูปทั้งหมด", "Delete all screenshots")
+        let waiting = importable.count, old = oldFolderNames
+        importBtn.title = tr("นำเข้า \(waiting) ไฟล์จาก \(old)", "Import \(waiting) from \(old)")
+        importBtn.toolTip = tr("ย้าย screenshot ที่ Mac แคปไว้ใน \(old) มาไว้ที่นี่",
+                               "Move the screenshots your Mac left in \(old) here")
+        importBtn.isHidden = waiting == 0
+        hintLabel.isHidden = waiting > 0   // makes room for the button
         clearBtn.isEnabled = !store.shots.isEmpty
     }
 
@@ -395,28 +414,81 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
     @objc private func wipeAllShots() {
         let n = store.shots.count
         guard n > 0 else { return }
+        let urls = store.shots.map(\.url)
+        askInBar(tr("ลบรูปทั้งหมด \(n) รูป? (ย้ายไปถังขยะ กู้คืนได้)",
+                    "Delete all \(n) screenshots? (moved to the Trash)"),
+                 yes: tr("ลบทั้งหมด", "Delete All"), destructive: true) { [weak self] in
+            self?.grid.deselectAll(nil)
+            self?.store.trash(urls)
+        }
+    }
+
+    private var oldFolders: [URL] { ScreencaptureSettings.userFolders(excluding: store.folder) }
+    private var oldFolderNames: String {
+        oldFolders.map { FileManager.default.displayName(atPath: $0.path) }.joined(separator: tr(" และ ", " and "))
+    }
+
+    /// Looks for screenshots and recordings macOS left in the user's old
+    /// screenshot folder (usually the Desktop), e.g. taken while Boardshot
+    /// was closed, and offers them through the import button.
+    private func scanForImports() {
+        let folders = oldFolders
+        Task { @MainActor [weak self] in
+            let found = folders.isEmpty ? [] : await Sweep.find(in: folders)
+            guard let self else { return }
+            self.importable = found
+            self.refreshTexts()
+        }
+    }
+
+    /// Asks in the bar, then moves them in. The folder watcher adds them to the grid.
+    @objc private func importOldShots() {
+        let names = oldFolderNames
+        let found = importable.filter { FileManager.default.fileExists(atPath: $0.path) }
+        guard !found.isEmpty else { scanForImports(); return }
+        askInBar(tr("นำเข้า \(found.count) ไฟล์จาก \(names)? (ย้ายมาที่นี่ เฉพาะที่ Mac แคปไว้)",
+                    "Import \(found.count) from \(names)? (moved here; only your Mac's captures)"),
+                 yes: tr("นำเข้า", "Import")) { [weak self] in
+            guard let self else { return }
+            let moved = Sweep.move(found, to: self.store.folder)
+            self.importable = []
+            self.refreshTexts()
+            if moved < found.count {
+                self.askInBar(tr("ย้ายได้ \(moved) จาก \(found.count) ไฟล์", "Moved \(moved) of \(found.count)"), yes: nil)
+            }
+        }
+    }
+
+    /// Shows `text` in place of the header. With `yes`, offers Cancel and that
+    /// button, which runs `action`; without, just an OK to close it.
+    private func askInBar(_ text: String, yes: String?, destructive: Bool = false, action: (() -> Void)? = nil) {
         cancelHover()
-        confirmLabel.stringValue = tr("ลบรูปทั้งหมด \(n) รูป? (ย้ายไปถังขยะ กู้คืนได้)",
-                                      "Delete all \(n) screenshots? (moved to the Trash)")
-        confirmNo.title = tr("ยกเลิก", "Cancel")
-        confirmYes.title = tr("ลบทั้งหมด", "Delete All")
+        confirmLabel.stringValue = text
+        confirmNo.title = yes == nil ? tr("ตกลง", "OK") : tr("ยกเลิก", "Cancel")
+        confirmNo.keyEquivalent = yes == nil ? "\r" : "\u{1b}"
+        confirmYes.isHidden = yes == nil
+        confirmYes.title = yes ?? ""
+        confirmYes.keyEquivalent = yes == nil ? "" : "\r"
+        confirmYes.hasDestructiveAction = destructive
+        confirmYes.bezelColor = destructive ? .systemRed : nil
+        confirmAction = action
         header.isHidden = true
         confirmBar.isHidden = false
     }
 
-    private var isConfirmingWipe: Bool { !confirmBar.isHidden }
+    private var isConfirming: Bool { !confirmBar.isHidden }
 
-    @objc private func cancelWipe() {
+    @objc private func closeConfirmBar() {
+        confirmAction = nil
         confirmBar.isHidden = true
         header.isHidden = false
         panel.makeFirstResponder(grid)
     }
 
-    @objc private func confirmWipe() {
-        let urls = store.shots.map(\.url)
-        cancelWipe()
-        grid.deselectAll(nil)
-        store.trash(urls)
+    @objc private func confirmBarYes() {
+        let action = confirmAction
+        closeConfirmBar()
+        action?()
     }
 
     @objc private func menuShowPrefs() { hide(); onShowSettings?() }
