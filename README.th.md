@@ -35,7 +35,7 @@
 1. [ดาวน์โหลด **Boardshot.dmg**](https://github.com/phukijnat/boardshot/releases/latest/download/Boardshot.dmg) (เป็นเวอร์ชันล่าสุดเสมอ) เวอร์ชันเก่าอยู่ที่หน้า [Releases](https://github.com/phukijnat/boardshot/releases)
 2. เปิดไฟล์ แล้วลาก **Boardshot** ไปใส่ **Applications**
 3. เปิด Boardshot จาก Applications
-4. หน้าต้อนรับจะถามก่อนเปลี่ยนค่า screenshot ใดๆ ให้เลือกแบบรูปเล็ก ลองแคปจอหนึ่งภาพ ถามว่าจะนำเข้าภาพแคปที่อยู่บน Desktop ไหม และเลือกให้เปิดแอปเองตอนเข้าเครื่องได้ เรียกดูอีกครั้งได้ที่ **ตั้งค่า → แสดงหน้าแนะนำอีกครั้ง**
+4. เปิดครั้งแรกจะมีหน้าต้อนรับพาตั้งค่า และถามก่อนเปลี่ยนอะไรทุกครั้ง เรียกดูอีกครั้งได้ที่ **ตั้งค่า → แสดงหน้าแนะนำอีกครั้ง**
 
 ### ถ้าขึ้นว่า "Apple could not verify Boardshot…"
 Boardshot ยังไม่ได้ผ่านการตรวจ (notarize) ของ Apple เพราะต้องสมัครบัญชีนักพัฒนาแบบเสียเงิน macOS เลยบล็อกตอนเปิดครั้งแรก ให้กด **Done** อย่ากด Move to Trash:
@@ -91,7 +91,24 @@ Boardshot ยังไม่ได้ผ่านการตรวจ (notarize
 
 ## Boardshot เปลี่ยนอะไรในเครื่อง
 
-หลังจากคุณตกลงในหน้าต้อนรับ (หรือติ๊ก "เก็บ screenshot ไว้ที่ Boardshot") แอปจะเปลี่ยนค่าระบบใน `com.apple.screencapture` คือโฟลเดอร์เก็บภาพ (`location` รวมถึง `location-screenshot` และ `location-screenrecording` ที่คาดว่า macOS 27 จะใช้), ปลายทางของภาพ (`target`, `target-screenshot` และ `target-screenrecording` ตั้งให้บันทึกเป็นไฟล์ เพราะภาพที่ส่งไป clipboard หรือ Preview จะไม่เข้า Boardshot) กับ `show-thumbnail` โดยไม่ต้องรีสตาร์ตอะไร แคปจอได้ตลอดระหว่างเปลี่ยน และจำค่าเดิมไว้ เอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออกเมื่อไหร่ก็คืนค่าเดิมให้ และตอนปิดแอปหรือแอป crash ก็คืนค่าเดิมให้ทั้งหมดเช่นกัน ระหว่างที่ Boardshot ปิดอยู่ Mac จะเก็บภาพแบบที่เคยตั้งไว้ พอเปิด Boardshot อีกครั้งก็กลับมาเก็บที่ `~/Pictures/Boardshot`
+Boardshot ถามก่อนเสมอ ถ้าคุณตกลง แอปจะเปลี่ยนค่าเดียวกับที่อยู่ใน **Options** ของ `⇧⌘5` คือบันทึกภาพเป็นไฟล์ไว้ที่ `~/Pictures/Boardshot` และใช้รูปเล็กมุมจอของ Boardshot แทนของระบบ (ถ้าไม่ได้เลือกใช้ของ Mac)
+
+ค่าเดิมของคุณถูกจำไว้ และคืนให้ทุกครั้งที่ปิด Boardshot หรือเอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออก แอปไม่แตะอย่างอื่นในเครื่อง
+
+<details>
+<summary>ค่าที่เปลี่ยนทั้งหมด</summary>
+
+Boardshot เขียนค่าเหล่านี้ใน `com.apple.screencapture`:
+
+| ค่า | ตั้งเป็น | เพื่ออะไร |
+|---|---|---|
+| `location`, `location-screenshot`, `location-screenrecording` | `~/Pictures/Boardshot` | โฟลเดอร์เก็บภาพ คาดว่า macOS 27 จะใช้สองตัวหลัง |
+| `target`, `target-screenshot`, `target-screenrecording` | `file` | ภาพที่ส่งไป clipboard หรือ Preview จะไม่กลายเป็นไฟล์ Boardshot จึงมองไม่เห็น |
+| `show-thumbnail` | ปิด หรือเปิดถ้าคุณเลือกใช้รูปเล็กของ Mac | รูปเล็กลอยมุมจอ |
+
+ไม่ต้องรีสตาร์ตอะไร แคปจอได้ตลอดระหว่างเปลี่ยน ถ้า Boardshot ปิดหรือ crash ค่าเดิมจะกลับมา ระหว่างที่แอปปิดอยู่ Mac จึงเก็บภาพแบบที่เคยตั้งไว้
+
+</details>
 
 ## คำถามที่พบบ่อย
 
@@ -105,34 +122,44 @@ Boardshot จำค่านั้นไว้ และคืนให้เม
 มีแค่การเช็กอัปเดต ซึ่งอ่านไฟล์ [`appcast.xml`](appcast.xml) จาก repo นี้ ปิดการเช็กอัตโนมัติได้ในหน้าตั้งค่า
 
 **ทำไมยังไม่ผ่าน notarize?**
-ต้องใช้บัญชีนักพัฒนา Apple แบบเสียเงิน แอปนี้เป็นโอเพนซอร์ส [build เองได้](#build-เอง)
+ต้องใช้บัญชีนักพัฒนา Apple แบบเสียเงิน แอปนี้เป็นโอเพนซอร์ส [build เองได้](#แจ้งปัญหาและร่วมพัฒนา) (ดูหัวข้อ **Build เอง**)
 
 ## ลบแอป
 
-1. ออกจากแอป (ค่า screenshot จะกลับเป็นแบบเดิมเอง)
+1. ออกจาก Boardshot ค่า screenshot จะกลับเป็นแบบเดิมเอง
 2. ย้าย `/Applications/Boardshot.app` ไปถังขยะ
 
-ถ้าลบแอปไปก่อนแล้ว คืนค่าเองได้ด้วยคำสั่งนี้:
+รูปที่ถ่ายไว้ยังอยู่ที่ `~/Pictures/Boardshot`
+
+ลบแอปไปตอนที่ยังเปิดอยู่? วางคำสั่งนี้ใน Terminal เพื่อกลับไปใช้ค่าตั้งต้นของ Mac:
 
 ```bash
 for k in location location-screenshot location-screenrecording target target-screenshot target-screenrecording show-thumbnail; do defaults delete com.apple.screencapture $k; done
 ```
 
-รูปที่ถ่ายไว้ยังอยู่ที่ `~/Pictures/Boardshot`
-
-## Build เอง
-
-ต้องมี Xcode Command Line Tools (`xcode-select --install`)
-
-```bash
-./build.sh --install
-```
-
-ชื่อแอป, bundle ID, เวอร์ชัน และลิงก์อัปเดต อยู่ใน [`config.sh`](config.sh) วิธีปล่อยเวอร์ชันใหม่ดูใน [CONTRIBUTING.md](CONTRIBUTING.md)
-
 ## แจ้งปัญหาและร่วมพัฒนา
 
-เจอบั๊กหรือมีไอเดีย [เปิด issue ได้เลย](https://github.com/phukijnat/boardshot/issues/new/choose) ส่ง Pull Request ได้เช่นกัน วิธี build และปล่อยเวอร์ชันดูใน [CONTRIBUTING.md](CONTRIBUTING.md)
+เจอบั๊กหรือมีไอเดีย [เปิด issue ได้เลย](https://github.com/phukijnat/boardshot/issues/new/choose) ส่ง Pull Request ได้เช่นกัน
+
+<details>
+<summary>Build เอง</summary>
+
+ต้องมี Xcode Command Line Tools (`xcode-select --install`) ไม่จำเป็นต้องมี Xcode
+
+```bash
+git clone https://github.com/phukijnat/boardshot.git
+cd boardshot
+./build.sh
+open build/Boardshot.app
+```
+
+ครั้งแรก `build.sh` จะโหลด Sparkle (ระบบอัปเดต) มาไว้ที่ `vendor/` แล้ว build แอปไว้ที่ `build/` ถ้าอยากให้ติดตั้งทับตัวใน Applications เลย ใช้ `./build.sh --install`
+
+แอปที่ build เองเซ็นแบบ ad hoc ทุกครั้งที่ build ใหม่ macOS อาจถามสิทธิ์ซ้ำ เช่น สิทธิ์เข้าถึง Desktop ตอนนำเข้าภาพ
+
+โครงสร้างโค้ดและวิธีปล่อยเวอร์ชันดูใน [CONTRIBUTING.md](CONTRIBUTING.md)
+
+</details>
 
 ถ้า Boardshot ทำให้ส่ง screenshot ได้ไวขึ้น กด ⭐ ให้ repo จะช่วยให้คนอื่นเจอแอปนี้ง่ายขึ้น
 

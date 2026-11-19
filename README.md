@@ -35,7 +35,7 @@ Take a screenshot the way you always do, press `⇧⌘Space`, and drag it straig
 1. [Download **Boardshot.dmg**](https://github.com/phukijnat/boardshot/releases/latest/download/Boardshot.dmg) (always the newest version). Older versions are on the [Releases](https://github.com/phukijnat/boardshot/releases) page.
 2. Open it and drag **Boardshot** into **Applications**.
 3. Open Boardshot from Applications.
-4. A welcome window asks before Boardshot changes any screenshot setting, lets you pick the thumbnail, has you try one screenshot, offers to import the screenshots already on your Desktop, and offers to open Boardshot at login. You can see it again from **Settings → Show Welcome Again**.
+4. The first time it opens, a welcome window walks you through setup and asks before changing anything. You can see it again from **Settings → Show Welcome Again**.
 
 ### "Apple could not verify Boardshot…"
 Boardshot isn't notarized by Apple (that needs a paid developer account), so macOS blocks it the first time. Click **Done**, not Move to Trash:
@@ -91,7 +91,24 @@ Open from the menu bar icon → **Settings…**, the gear button in the panel, o
 
 ## What Boardshot changes on your Mac
 
-Only after you agree in the welcome window (or tick **Keep screenshots in Boardshot**), Boardshot changes system settings in `com.apple.screencapture`: the save folder (`location`, plus `location-screenshot` and `location-screenrecording`, which macOS 27 is expected to use), where captures are saved (`target`, `target-screenshot` and `target-screenrecording` set to a file, since Boardshot can't see captures sent to the clipboard or Preview) and `show-thumbnail`. Nothing is restarted, so screenshots keep working while this happens. It remembers your original values and puts them back when you untick **Keep screenshots in Boardshot**. Quitting the app, or the app crashing, puts them all back too, so while Boardshot is closed your Mac saves screenshots the way it did before; opening Boardshot again switches back to `~/Pictures/Boardshot`.
+Boardshot asks first. If you say yes, it changes the same things you'd find under **Options** in `⇧⌘5`: screenshots are saved as files in `~/Pictures/Boardshot`, and the floating thumbnail is replaced by Boardshot's own (unless you keep the Mac's).
+
+Your own settings are remembered and put back whenever you quit Boardshot or untick **Keep screenshots in Boardshot**. Nothing else on your Mac is touched.
+
+<details>
+<summary>Exactly which settings</summary>
+
+Boardshot writes these keys in `com.apple.screencapture`:
+
+| Key | Set to | Why |
+|---|---|---|
+| `location`, `location-screenshot`, `location-screenrecording` | `~/Pictures/Boardshot` | The save folder. macOS 27 is expected to read the last two. |
+| `target`, `target-screenshot`, `target-screenrecording` | `file` | Captures sent to the clipboard or Preview never become a file Boardshot can see. |
+| `show-thumbnail` | off, or on if you pick the Mac's thumbnail | The floating thumbnail. |
+
+Nothing is restarted, so screenshots keep working while this happens. If Boardshot quits or crashes, the originals go back, so while it's closed your Mac saves screenshots the way it did before.
+
+</details>
 
 ## FAQ
 
@@ -105,36 +122,44 @@ Boardshot remembers it and puts it back when you untick **Keep screenshots in Bo
 Only the update check, which reads [`appcast.xml`](appcast.xml) from this repo. You can turn automatic checks off in Settings.
 
 **Why isn't it notarized?**
-Notarization needs a paid Apple developer account. The app is open source and you can [build it yourself](#build-from-source).
+Notarization needs a paid Apple developer account. The app is open source and you can [build it yourself](#feedback--contributing) (see **Build from source**).
 
 ## Uninstall
 
-1. Quit Boardshot (this puts your screenshot settings back).
+1. Quit Boardshot. This puts your screenshot settings back.
 2. Move `/Applications/Boardshot.app` to the Trash.
 
-If you already deleted the app, restore the macOS defaults with:
+Your screenshots stay in `~/Pictures/Boardshot`.
+
+Deleted the app while it was running? Paste this into Terminal to go back to the Mac's default screenshot settings:
 
 ```bash
 for k in location location-screenshot location-screenrecording target target-screenshot target-screenrecording show-thumbnail; do defaults delete com.apple.screencapture $k; done
 ```
 
-Your screenshots stay in `~/Pictures/Boardshot`.
-
-## Build from source
-
-Needs Xcode Command Line Tools (`xcode-select --install`).
-
-```bash
-./build.sh --install
-```
-
-This downloads Sparkle (the update framework) into `vendor/`, builds a universal app into `build/`, and installs it to `/Applications`. `./build.sh --dmg` also makes `dist/Boardshot-<version>.dmg`.
-
-App name, bundle ID, version and update feed all live in [`config.sh`](config.sh). See [CONTRIBUTING.md](CONTRIBUTING.md) for how releases are made.
-
 ## Feedback & contributing
 
-Found a bug or have an idea? [Open an issue](https://github.com/phukijnat/boardshot/issues/new/choose). Pull requests are welcome too; [CONTRIBUTING.md](CONTRIBUTING.md) explains how the project is built and released.
+Found a bug or have an idea? [Open an issue](https://github.com/phukijnat/boardshot/issues/new/choose). Pull requests are welcome too.
+
+<details>
+<summary>Build from source</summary>
+
+Needs Xcode Command Line Tools (`xcode-select --install`). Xcode itself is optional.
+
+```bash
+git clone https://github.com/phukijnat/boardshot.git
+cd boardshot
+./build.sh
+open build/Boardshot.app
+```
+
+`build.sh` downloads Sparkle (the update framework) into `vendor/` on first run and builds a universal app into `build/`. Use `./build.sh --install` to replace the copy in Applications instead.
+
+Your own builds are signed ad hoc, so macOS may ask again for permissions, such as access to the Desktop when importing, after each rebuild.
+
+[CONTRIBUTING.md](CONTRIBUTING.md) covers the code layout and how releases are made.
+
+</details>
 
 If Boardshot makes sharing screenshots feel instant, a ⭐ on the repo helps other people find it.
 
