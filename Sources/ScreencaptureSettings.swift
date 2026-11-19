@@ -89,6 +89,27 @@ enum ScreencaptureSettings {
         synchronize()
     }
 
+    /// The folders macOS saved screenshots and recordings to before Boardshot
+    /// (the Desktop unless the user chose another), not counting `exclude`.
+    /// While Boardshot manages the settings these are the saved originals;
+    /// otherwise the current values.
+    static func userFolders(excluding exclude: URL) -> [URL] {
+        let desktop = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Desktop")
+        func value(_ k: String) -> String? {
+            if isSaved(k) { return store.string(forKey: savedKey(k)) }
+            return read(k)
+        }
+        let paths = [value("location-screenshot") ?? value("location"),
+                     value("location-screenrecording") ?? value("location")]
+        var seen = Set<String>()
+        return paths.map { p -> URL in
+            guard let p else { return desktop }
+            return URL(fileURLWithPath: (p as NSString).expandingTildeInPath, isDirectory: true)
+        }
+        .filter { $0.standardizedFileURL.path != exclude.standardizedFileURL.path }
+        .filter { seen.insert($0.standardizedFileURL.path).inserted }
+    }
+
     private static func isOn(_ v: String) -> Bool { v == "1" || v.lowercased() == "true" }
 
     /// The value as `defaults read` prints it: booleans as "1" / "0".

@@ -59,6 +59,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     private let recorder = ShortcutRecorder()
     private let errorLabel = NSTextField(labelWithString: "")
     var onManageChanged: (() -> Void)?
+    private weak var sweepButton: NSButton?
     var onQuit: (() -> Void)?
     var onShowWelcome: (() -> Void)?
 
@@ -145,8 +146,8 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
                               target: self, action: #selector(manageChanged(_:)))
         manage.state = Prefs.manageScreenshots ? .on : .off
         let manageNote = NSTextField(wrappingLabelWithString: tr(
-            "ภาพไปที่ ~/Pictures/\(AppInfo.name)\nเอาติ๊กออกเพื่อคืนค่าเดิมของ Mac ควรทำก่อนลบแอป",
-            "Screenshots go to ~/Pictures/\(AppInfo.name).\nUntick to restore the Mac's original settings. Do this before deleting the app."))
+            "ภาพไปที่ ~/Pictures/\(AppInfo.name)\nเอาติ๊กออกหรือออกจากแอป จะคืนค่าเดิมของ Mac",
+            "Screenshots go to ~/Pictures/\(AppInfo.name).\nUntick, or quit the app, to restore the Mac's original settings."))
         manageNote.font = .systemFont(ofSize: 11)
         manageNote.textColor = .secondaryLabelColor
         manageNote.preferredMaxLayoutWidth = 320
@@ -167,7 +168,19 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         thumbNote.textColor = .secondaryLabelColor
         thumbNote.preferredMaxLayoutWidth = 320
 
-        let manageCol = NSStackView(views: [manage, manageNote, thumbRow, thumbNote])
+        // Sweep old screenshots in from the old folder
+        let oldFolders = ScreencaptureSettings.userFolders(excluding: AppDelegate.folder)
+        let oldNames = oldFolders.map { FileManager.default.displayName(atPath: $0.path) }
+            .joined(separator: tr(" และ ", " and "))
+        let sweepBtn = NSButton(title: tr("ย้าย screenshot จาก \(oldNames) มาไว้ที่นี่…",
+                                          "Move Screenshots from \(oldNames)…"),
+                                target: self, action: #selector(sweepClicked))
+        sweepBtn.bezelStyle = .rounded
+        sweepBtn.isHidden = oldFolders.isEmpty
+        sweepButton = sweepBtn
+
+        let manageCol = NSStackView(views: [manage, manageNote, thumbRow, thumbNote, sweepBtn])
+        manageCol.setCustomSpacing(10, after: thumbNote)
         manageCol.orientation = .vertical
         manageCol.alignment = .leading
         manageCol.spacing = 4
@@ -286,6 +299,39 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
     @objc private func thumbStyleChanged(_ sender: NSPopUpButton) {
         Prefs.thumbStyle = ThumbStyle.allCases[sender.indexOfSelectedItem]
         onManageChanged?()   // writes the system `show-thumbnail` setting
+    }
+
+    /// Finds the screenshots and recordings in the old folder, asks, then moves them.
+    @objc private func sweepClicked() {
+        let folders = ScreencaptureSettings.userFolders(excluding: AppDelegate.folder)
+        let names = folders.map { FileManager.default.displayName(atPath: $0.path) }
+            .joined(separator: tr(" และ ", " and "))
+        guard let window else { return }
+        sweepButton?.isEnabled = false
+        Task { @MainActor in
+            let found = await Sweep.find(in: folders)
+            defer { sweepButton?.isEnabled = true }
+            let a = NSAlert()
+            a.icon = NSImage(named: NSImage.applicationIconName)
+            guard !found.isEmpty else {
+                a.messageText = tr("ไม่มี screenshot ใน \(names)", "No screenshots in \(names)")
+                a.beginSheetModal(for: window, completionHandler: nil)
+                return
+            }
+            a.messageText = tr("ย้าย \(found.count) ไฟล์จาก \(names) มาไว้ที่ \(AppInfo.name)?",
+                               "Move \(found.count) files from \(names) to \(AppInfo.name)?")
+            a.informativeText = tr("ย้ายเฉพาะภาพและวิดีโอที่ Mac แคปหน้าจอ ไฟล์อื่นไม่ถูกแตะ ไฟล์จะไปอยู่ที่ ~/Pictures/\(AppInfo.name)",
+                                   "Only screenshots and screen recordings made by your Mac are moved; other files stay. They go to ~/Pictures/\(AppInfo.name).")
+            a.addButton(withTitle: tr("ย้าย", "Move"))
+            a.addButton(withTitle: tr("ยกเลิก", "Cancel"))
+            guard await a.beginSheetModal(for: window) == .alertFirstButtonReturn else { return }
+            let moved = Sweep.move(found, to: AppDelegate.folder)
+            if moved < found.count {
+                let e = NSAlert()
+                e.messageText = tr("ย้ายได้ \(moved) จาก \(found.count) ไฟล์", "Moved \(moved) of \(found.count) files")
+                e.beginSheetModal(for: window, completionHandler: nil)
+            }
+        }
     }
 
     @objc private func hoverPreviewChanged(_ sender: NSButton) {
