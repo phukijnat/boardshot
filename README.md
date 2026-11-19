@@ -23,8 +23,9 @@ Take a screenshot the way you always do, press `⇧⌘Space`, and drag it straig
 
 - **Quick panel.** `⇧⌘Space` opens every shot: hover to preview, drag into any app, copy, or trash.
 - **Same shortcuts, tidy Desktop.** `⌘⇧3`, `⌘⇧4` and `⌘⇧5` save to `~/Pictures/Boardshot` instead of the Desktop.
-- **Instant files.** Boardshot's own corner thumbnail replaces the system one, so the file is saved right away. Prefer the Mac's Markup editor? Switch back to the macOS thumbnail in Settings.
-- **Undo anytime.** Your original screenshot settings are saved and put back with one checkbox.
+- **Instant files, same thumbnail tricks.** Boardshot's own corner thumbnail replaces the system one, so the file is saved right away. Click it to mark up a screenshot (the Mac's Markup) or trim a recording; right-click for the Mac's usual choices (save to Desktop, open in Preview, show in Finder, delete…).
+- **Bring old ones in.** Screenshots your Mac left on the Desktop (say, taken while Boardshot was closed) show up as an **Import** button in the panel.
+- **Undo anytime.** Your original screenshot settings are saved and put back when you untick one checkbox or quit the app.
 - **Updates itself.** Tells you when a new version is out and installs it.
 - **Private.** No account, no analytics. The only network request is the update check.
 - Thai and English UI. Universal app for Apple Silicon and Intel, macOS 14 or later.
@@ -34,7 +35,7 @@ Take a screenshot the way you always do, press `⇧⌘Space`, and drag it straig
 1. [Download **Boardshot.dmg**](https://github.com/phukijnat/boardshot/releases/latest/download/Boardshot.dmg) (always the newest version). Older versions are on the [Releases](https://github.com/phukijnat/boardshot/releases) page.
 2. Open it and drag **Boardshot** into **Applications**.
 3. Open Boardshot from Applications.
-4. A welcome window asks before Boardshot changes any screenshot setting, lets you pick the thumbnail, has you try one screenshot, and offers to open Boardshot at login. You can see it again from **Settings → Show Welcome Again**.
+4. A welcome window asks before Boardshot changes any screenshot setting, lets you pick the thumbnail, has you try one screenshot, offers to import the screenshots already on your Desktop, and offers to open Boardshot at login. You can see it again from **Settings → Show Welcome Again**.
 
 ### "Apple could not verify Boardshot…"
 Boardshot isn't notarized by Apple (that needs a paid developer account), so macOS blocks it the first time. Click **Done**, not Move to Trash:
@@ -60,8 +61,19 @@ Updates installed from inside the app don't need this step again.
 | Open in Preview | Double-click or `Return` |
 | Move to Trash | `⌫` |
 | Delete all | Trash button in the panel header (asks first) |
+| Bring in screenshots from the Desktop | **Import N from Desktop** in the panel header, shown when there are any (asks first) |
 | Move the panel | Drag the header |
 | Close | `Esc` or click elsewhere |
+
+The corner thumbnail after a capture:
+
+| Action | How |
+|---|---|
+| Use it | Drag it into another app |
+| Mark up a screenshot | Click it (opens the Mac's Markup; **Done** saves over the file) |
+| Trim a recording | Click it, drag the yellow handles, then **Trim** |
+| More (save a copy, open in Preview, show in Finder, delete…) | Right-click |
+| Dismiss | Swipe right, or wait 5 seconds |
 
 ## Settings
 
@@ -70,7 +82,7 @@ Open from the menu bar icon → **Settings…**, the gear button in the panel, o
 - Shortcut to open the panel (must include `⌘`, `⌃` or `⌥`)
 - Language: Thai / English
 - Keep screenshots in Boardshot: on / off
-- Thumbnail after capture: Boardshot's (instant file), macOS (Markup editor; the file arrives once the thumbnail goes away, and it may not appear on a second display), or none
+- Thumbnail after capture: Boardshot's (instant file, click to mark up or trim, right-click for more), macOS (the Mac's own; the file arrives once the thumbnail goes away, and it may not appear on a second display), or none
 - Larger preview when hovering a shot
 - Open at login
 - Show the menu bar icon
@@ -84,7 +96,7 @@ Only after you agree in the welcome window (or tick **Keep screenshots in Boards
 ## FAQ
 
 **Does it move the screenshots already on my Desktop?**
-No. Only new screenshots go to `~/Pictures/Boardshot`. Move old ones there yourself if you want them in the panel.
+Only if you ask. When your old screenshot folder (usually the Desktop) holds screenshots or screen recordings, the welcome window offers to import them, and the panel shows **Import N from Desktop**. Importing moves them into `~/Pictures/Boardshot`. Only files your Mac made by capturing the screen are moved; everything else stays where it is.
 
 **I already save screenshots to a custom folder. What happens to that setting?**
 Boardshot remembers it and puts it back when you untick **Keep screenshots in Boardshot**.
