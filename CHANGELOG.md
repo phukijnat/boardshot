@@ -4,7 +4,7 @@
 
 ## 0.3.1
 
-- Fixed: if your Mac was set to save screenshots to the clipboard, Preview or another app (⇧⌘5 → Options), they never reached Boardshot and the window stayed empty. Boardshot now saves them as files, and puts your choice back when you untick **Keep screenshots in Boardshot**.
+- Fixed: if your Mac was set to save screenshots to the clipboard, Preview or another app (⇧⌘5 → Options), they never reached Boardshot and the window stayed empty. Boardshot now saves them as files, and puts your choice back when you untick “Keep screenshots in Boardshot”.
 - Turning Boardshot's screenshot folder on or off no longer restarts the menu bar, so screenshots keep working while it switches.
 
 ## 0.3.0
