@@ -3,9 +3,9 @@ import Foundation
 /// Reads and writes the system screenshot settings (`com.apple.screencapture`).
 /// When "manage screenshots" is on, screenshots go to Boardshot's folder and the
 /// floating thumbnail follows `Prefs.thumbStyle`: off (files land instantly) unless
-/// the user picked the macOS thumbnail. Turning "manage screenshots" off in Settings
-/// puts the user's original values back. Quitting the app puts back only the
-/// thumbnail, so captures still show feedback; screenshots keep going to the folder.
+/// the user picked the macOS thumbnail. Turning "manage screenshots" off in Settings,
+/// or quitting the app, puts the user's original values back; the next launch
+/// saves them again and applies Boardshot's.
 ///
 /// Values are written through cfprefsd (CFPreferences), and the screenshot
 /// service reads them on each capture, so nothing needs restarting: checked on
@@ -86,20 +86,6 @@ enum ScreencaptureSettings {
             store.removeObject(forKey: savedMark(k))
         }
         store.removeObject(forKey: legacyFlag)
-        synchronize()
-    }
-
-    /// The user's own `show-thumbnail` from before Boardshot (macOS default: on).
-    static var originalThumbnail: Bool {
-        guard isSaved(thumbKey), let v = store.string(forKey: savedKey(thumbKey)) else { return true }
-        return isOn(v)
-    }
-
-    /// Puts back only the user's original `show-thumbnail`, keeping the folder
-    /// and the saved originals. Used on quit, when Boardshot's own corner
-    /// thumbnail goes away. Applies on the next capture.
-    static func restoreThumbnail() {
-        write(thumbKey, originalThumbnail)
         synchronize()
     }
 

@@ -79,7 +79,7 @@ Boardshot ยังไม่ได้ผ่านการตรวจ (notarize
 
 ## Boardshot เปลี่ยนอะไรในเครื่อง
 
-หลังจากคุณตกลงในหน้าต้อนรับ (หรือติ๊ก "เก็บ screenshot ไว้ที่ Boardshot") แอปจะเปลี่ยนค่าระบบใน `com.apple.screencapture` คือโฟลเดอร์เก็บภาพ (`location` รวมถึง `location-screenshot` และ `location-screenrecording` ที่คาดว่า macOS 27 จะใช้), ปลายทางของภาพ (`target`, `target-screenshot` และ `target-screenrecording` ตั้งให้บันทึกเป็นไฟล์ เพราะภาพที่ส่งไป clipboard หรือ Preview จะไม่เข้า Boardshot) กับ `show-thumbnail` โดยไม่ต้องรีสตาร์ตอะไร แคปจอได้ตลอดระหว่างเปลี่ยน และจำค่าเดิมไว้ เอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออกเมื่อไหร่ก็คืนค่าเดิมให้ ส่วนการปิดแอป หรือแอป crash จะคืนแค่รูปเล็กของ macOS ให้ยังเห็นว่าแคปติด ภาพยังเข้า `~/Pictures/Boardshot` เหมือนเดิม
+หลังจากคุณตกลงในหน้าต้อนรับ (หรือติ๊ก "เก็บ screenshot ไว้ที่ Boardshot") แอปจะเปลี่ยนค่าระบบใน `com.apple.screencapture` คือโฟลเดอร์เก็บภาพ (`location` รวมถึง `location-screenshot` และ `location-screenrecording` ที่คาดว่า macOS 27 จะใช้), ปลายทางของภาพ (`target`, `target-screenshot` และ `target-screenrecording` ตั้งให้บันทึกเป็นไฟล์ เพราะภาพที่ส่งไป clipboard หรือ Preview จะไม่เข้า Boardshot) กับ `show-thumbnail` โดยไม่ต้องรีสตาร์ตอะไร แคปจอได้ตลอดระหว่างเปลี่ยน และจำค่าเดิมไว้ เอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออกเมื่อไหร่ก็คืนค่าเดิมให้ และตอนปิดแอปหรือแอป crash ก็คืนค่าเดิมให้ทั้งหมดเช่นกัน ระหว่างที่ Boardshot ปิดอยู่ Mac จะเก็บภาพแบบที่เคยตั้งไว้ พอเปิด Boardshot อีกครั้งก็กลับมาเก็บที่ `~/Pictures/Boardshot`
 
 ## คำถามที่พบบ่อย
 
@@ -97,8 +97,8 @@ Boardshot จำค่านั้นไว้ และคืนให้เม
 
 ## ลบแอป
 
-1. ตั้งค่า… → เอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออก
-2. ออกจากแอป แล้วย้าย `/Applications/Boardshot.app` ไปถังขยะ
+1. ออกจากแอป (ค่า screenshot จะกลับเป็นแบบเดิมเอง)
+2. ย้าย `/Applications/Boardshot.app` ไปถังขยะ
 
 ถ้าลบแอปไปก่อนแล้ว คืนค่าเองได้ด้วยคำสั่งนี้:
 

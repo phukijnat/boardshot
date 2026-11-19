@@ -40,10 +40,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if !firstRun {
             applyManageSetting()
             Updater.shared.start()
-        } else if ScreencaptureSettings.hasSavedOriginals {
+        } else if Prefs.manageScreenshots {
             applyManageSetting()   // agreed in step 1 last time, then closed the window early
-        } else {
-            ExitGuard.arm(nil)
         }
         panel = PanelController(store: store)
 
@@ -90,29 +88,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
     }
 
-    /// Our corner thumbnail goes away with the app, so give the macOS one back;
-    /// otherwise a capture after quitting shows nothing. The next launch turns it
-    /// off again. (Not reached by the duplicate copy, which quits with exit(0).)
-    /// Crashes and Force Quit are covered by `ExitGuard`.
-    func applicationWillTerminate(_ note: Notification) { putBackThumbnail() }
+    /// With the app gone, the Mac goes back to the user's own screenshot
+    /// settings (folder, target, thumbnail), so a capture after quitting lands
+    /// where it used to and shows the macOS thumbnail. The next launch applies
+    /// Boardshot's settings again. (Not reached by the duplicate copy, which
+    /// quits with exit(0).) Crashes and Force Quit are covered by `ExitGuard`.
+    func applicationWillTerminate(_ note: Notification) { putBackSettings() }
 
-    private func putBackThumbnail() {
-        // Only when Boardshot really turned it off (not before the user agreed).
-        guard store != nil, Prefs.manageScreenshots, !Prefs.thumbStyle.systemThumbnail,
-              ScreencaptureSettings.hasSavedOriginals else { return }
-        ScreencaptureSettings.restoreThumbnail()
+    private func putBackSettings() {
+        // restore() does nothing unless Boardshot changed the settings.
+        guard store != nil else { return }
+        ScreencaptureSettings.restore()
     }
 
     /// A plain `kill` (and Ctrl-C, hang-up) ends a Cocoa app without
     /// `applicationWillTerminate`, so catch those signals and put the
-    /// thumbnail back first. Not routed through NSApp.terminate, which can
+    /// settings back first. Not routed through NSApp.terminate, which can
     /// wait behind a modal alert.
     private func restoreOnSignals() {
         for sig in [SIGTERM, SIGINT, SIGHUP] {
             signal(sig, SIG_IGN)
             let source = DispatchSource.makeSignalSource(signal: sig, queue: .main)
             source.setEventHandler { [self] in
-                putBackThumbnail()
+                putBackSettings()
                 exit(0)
             }
             source.resume()
@@ -178,8 +176,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             ScreencaptureSettings.apply(folder: Self.folder, systemThumbnail: Prefs.thumbStyle.systemThumbnail)
         }
         else { ScreencaptureSettings.restore() }
-        let managedThumb = Prefs.manageScreenshots && !Prefs.thumbStyle.systemThumbnail
-        ExitGuard.arm(managedThumb ? ScreencaptureSettings.originalThumbnail : nil)
     }
 
     @objc private func prefsChanged() { rebuildMenu() }
@@ -217,6 +213,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc private func openFolder() { NSWorkspace.shared.open(Self.folder) }
     @objc private func showPrefsWindow() { settings.show() }
     @objc private func quit() { NSApp.terminate(nil) }
+}
+
+// Run by ExitGuard after a crash or Force Quit: put the settings back, unless
+// a new copy (an update relaunch) already took over, and show nothing.
+if CommandLine.arguments.contains(ExitGuard.restoreArg) {
+    let others = NSRunningApplication.runningApplications(
+        withBundleIdentifier: Bundle.main.bundleIdentifier ?? "").filter { $0 != .current }
+    if others.isEmpty { ScreencaptureSettings.restore() }
+    exit(0)
 }
 
 let app = NSApplication.shared
