@@ -55,7 +55,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // Corner thumbnail: shows after each new screenshot, closes the moment
         // the Boardshot window opens.
         panel.onWillShow = { [weak self] in self?.corner.hide() }
-        corner.onClick = { [weak self] url in self?.panel.show(selecting: url) }
+        // Click edits, like the macOS thumbnail: images open in Markup.
+        // Recordings open the Boardshot window until video trimming exists.
+        corner.onClick = { [weak self] url in
+            if Markup.canEdit(url) { Markup.shared.edit(url) } else { self?.panel.show(selecting: url) }
+        }
+        corner.onMarkup = { url in Markup.shared.edit(url) }
+        corner.onShowInBoardshot = { [weak self] url in self?.panel.show(selecting: url) }
+        corner.onTrash = { [weak self] url in self?.store.trash([url]) }
         store.onNewShot = { [weak self] shot in
             self?.showCorner(for: shot)
             self?.tellOnboarding(about: shot)

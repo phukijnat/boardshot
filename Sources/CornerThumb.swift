@@ -1,11 +1,19 @@
 import AppKit
+import UniformTypeIdentifiers
 
 /// Boardshot's own "floating thumbnail": after a screenshot, a small preview
 /// slides in at the bottom-right of the screen the mouse is on. The file is
-/// already saved, so it can be dragged out, clicked to open Boardshot, or
+/// already saved, so it can be dragged out, clicked to edit (like the macOS
+/// thumbnail), right-clicked for more, or
 /// closed at any moment without losing anything.
 final class CornerThumb: NSObject, NSDraggingSource {
     var onClick: ((URL) -> Void)?
+    /// Opens the Boardshot window on this shot (right-click menu).
+    var onShowInBoardshot: ((URL) -> Void)?
+    /// Opens the shot in Markup (right-click menu).
+    var onMarkup: ((URL) -> Void)?
+    /// Moves the shot to the Trash (right-click menu).
+    var onTrash: ((URL) -> Void)?
 
     private let window: NSPanel
     private let view = CornerThumbView()
@@ -98,6 +106,95 @@ final class CornerThumb: NSObject, NSDraggingSource {
 
     fileprivate func swipedAway() { slideOut() }
 
+    // MARK: Right-click menu (the same choices as the macOS thumbnail's)
+
+    fileprivate func showMenu(with event: NSEvent) {
+        guard let url else { return }
+        timer?.invalidate()
+        let menu = NSMenu()
+        menu.autoenablesItems = false
+        func add(_ title: String, _ enabled: Bool = true, _ action: @escaping () -> Void) {
+            let item = NSMenuItem(title: title, action: #selector(MenuAction.run), keyEquivalent: "")
+            let box = MenuAction(action)
+            item.target = box
+            item.representedObject = box   // the menu item keeps its target alive
+            item.isEnabled = enabled
+            menu.addItem(item)
+        }
+        let isMovie = UTType(filenameExtension: url.pathExtension)?.conforms(to: .movie) ?? false
+
+        add(tr("บันทึกไปที่ Desktop", "Save to Desktop")) { [weak self] in self?.saveCopy(url, to: .desktopDirectory) }
+        add(tr("บันทึกไปที่ Documents", "Save to Documents")) { [weak self] in self?.saveCopy(url, to: .documentDirectory) }
+        add(tr("บันทึกไปที่ Clipboard", "Save to Clipboard")) { [weak self] in self?.copyToClipboard(url) }
+        menu.addItem(.separator())
+
+        for (name, title) in [(NSSharingService.Name.composeEmail, "Mail"), (.composeMessage, "Messages")] {
+            let service = NSSharingService(named: name)
+            add(tr("เปิดใน \(title)", "Open in \(title)"), service?.canPerform(withItems: [url]) ?? false) { [weak self] in
+                service?.perform(withItems: [url])
+                self?.hide()
+            }
+        }
+        let apps = isMovie ? [("com.apple.QuickTimePlayerX", "QuickTime Player"), ("com.apple.Photos", "Photos")]
+                           : [("com.apple.Preview", "Preview"), ("com.apple.Photos", "Photos")]
+        for (id, title) in apps {
+            guard let app = NSWorkspace.shared.urlForApplication(withBundleIdentifier: id) else { continue }
+            add(tr("เปิดใน \(title)", "Open in \(title)")) { [weak self] in
+                NSWorkspace.shared.open([url], withApplicationAt: app, configuration: NSWorkspace.OpenConfiguration())
+                self?.hide()
+            }
+        }
+        menu.addItem(.separator())
+
+        if Markup.canEdit(url) {
+            add("Markup") { [weak self] in
+                self?.hide()
+                self?.onMarkup?(url)
+            }
+        }
+        add(tr("แสดงใน Finder", "Show in Finder")) { [weak self] in
+            NSWorkspace.shared.activateFileViewerSelecting([url])
+            self?.hide()
+        }
+        add(tr("แสดงใน \(AppInfo.name)", "Show in \(AppInfo.name)")) { [weak self] in
+            self?.hide()
+            self?.onShowInBoardshot?(url)
+        }
+        add(tr("ลบ", "Delete")) { [weak self] in
+            self?.hide()
+            self?.onTrash?(url)
+        }
+        add(tr("ปิด", "Close")) { [weak self] in self?.slideOut() }
+
+        NSMenu.popUpContextMenu(menu, with: event, for: view)
+        // Nothing chosen (or the action ran without closing it): carry on as after a hover.
+        if window.isVisible, window.alphaValue > 0 { restartTimer(2) }
+    }
+
+    /// Copies the file (Boardshot keeps its own), adding " 2", " 3"… if the name is taken.
+    private func saveCopy(_ url: URL, to dir: FileManager.SearchPathDirectory) {
+        hide()
+        let fm = FileManager.default
+        guard let folder = fm.urls(for: dir, in: .userDomainMask).first else { return }
+        let base = url.deletingPathExtension().lastPathComponent, ext = url.pathExtension
+        var dest = folder.appendingPathComponent(url.lastPathComponent)
+        var n = 2
+        while fm.fileExists(atPath: dest.path) {
+            dest = folder.appendingPathComponent("\(base) \(n)").appendingPathExtension(ext)
+            n += 1
+        }
+        do { try fm.copyItem(at: url, to: dest) } catch { NSSound.beep() }
+    }
+
+    private func copyToClipboard(_ url: URL) {
+        hide()
+        let pb = NSPasteboard.general
+        pb.clearContents()
+        var objects: [NSPasteboardWriting] = [url as NSURL]
+        if let img = NSImage(contentsOf: url) { objects.insert(img, at: 0) }
+        pb.writeObjects(objects)
+    }
+
     fileprivate func beginDrag(with event: NSEvent) {
         guard let url else { return }
         timer?.invalidate()
@@ -118,6 +215,13 @@ final class CornerThumb: NSObject, NSDraggingSource {
         hide()
         window.alphaValue = 1
     }
+}
+
+/// Runs a closure from a menu item.
+private final class MenuAction: NSObject {
+    private let action: () -> Void
+    init(_ action: @escaping () -> Void) { self.action = action }
+    @objc func run() { action() }
 }
 
 private final class CornerThumbView: NSView {
@@ -150,7 +254,10 @@ private final class CornerThumbView: NSView {
     override func mouseEntered(with event: NSEvent) { owner?.hovered(true) }
     override func mouseExited(with event: NSEvent) { owner?.hovered(false) }
 
+    override func rightMouseDown(with event: NSEvent) { owner?.showMenu(with: event) }
+
     override func mouseDown(with event: NSEvent) {
+        if event.modifierFlags.contains(.control) { owner?.showMenu(with: event); return }
         downEvent = event
         dragged = false
     }
@@ -166,7 +273,7 @@ private final class CornerThumbView: NSView {
     }
 
     override func mouseUp(with event: NSEvent) {
-        if !dragged { owner?.clicked() }
+        if !dragged, downEvent != nil { owner?.clicked() }
         downEvent = nil
     }
 
