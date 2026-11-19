@@ -2,7 +2,7 @@
 
 `release.sh` turns the bullet list under each version into the release notes users see in the update window.
 
-## Unreleased
+## 0.3.2
 
 - The gear button in the Boardshot window opens Settings straight away, instead of a menu that repeated the folder button and Quit (still on ⌘Q and in Settings).
 
