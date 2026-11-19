@@ -4,6 +4,18 @@
     <title>Boardshot</title>
     <!-- ITEMS -->
     <item>
+      <title>0.3.2</title>
+      <pubDate>Thu, 19 Nov 2026 06:38:59 +0000</pubDate>
+      <sparkle:version>302</sparkle:version>
+      <sparkle:shortVersionString>0.3.2</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul>
+<li>The gear button in the Boardshot window opens Settings straight away, instead of a menu that repeated the folder button and Quit (still on ⌘Q and in Settings).</li>
+</ul>
+]]></description>
+      <enclosure url="https://github.com/phukijnat/boardshot/releases/download/v0.3.2/Boardshot-0.3.2.dmg" length="1554995" type="application/octet-stream" sparkle:edSignature="cphhXuzfIV3in6P8EI6UdpEAAP04T0TbIRpkgTzPQzF5MK1YrjdtYXNVb3dTOt0HzrlIuTF/ifbijhGfRI8SAA=="/>
+    </item>
+    <item>
       <title>0.3.1</title>
       <pubDate>Thu, 19 Nov 2026 06:11:49 +0000</pubDate>
       <sparkle:version>301</sparkle:version>
