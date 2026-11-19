@@ -4,6 +4,19 @@
     <title>Boardshot</title>
     <!-- ITEMS -->
     <item>
+      <title>0.3.1</title>
+      <pubDate>Thu, 19 Nov 2026 06:11:49 +0000</pubDate>
+      <sparkle:version>301</sparkle:version>
+      <sparkle:shortVersionString>0.3.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul>
+<li>Fixed: if your Mac was set to save screenshots to the clipboard, Preview or another app (⇧⌘5 → Options), they never reached Boardshot and the window stayed empty. Boardshot now saves them as files, and puts your choice back when you untick “Keep screenshots in Boardshot”.</li>
+<li>Turning Boardshot's screenshot folder on or off no longer restarts the menu bar, so screenshots keep working while it switches.</li>
+</ul>
+]]></description>
+      <enclosure url="https://github.com/phukijnat/boardshot/releases/download/v0.3.1/Boardshot-0.3.1.dmg" length="1557064" type="application/octet-stream" sparkle:edSignature="xsX7Mj6C9rfBSoSqQBv5SOSFyHDT4LI2n1k1cXUUiuqu48K9LJk8n94EUQeFWtXxZMDYLQ1H7AO/+Xd/tSXcBQ=="/>
+    </item>
+    <item>
       <title>0.3.0</title>
       <pubDate>Wed, 18 Nov 2026 10:54:56 +0000</pubDate>
       <sparkle:version>300</sparkle:version>
