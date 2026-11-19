@@ -37,7 +37,7 @@ for arch in arm64 x86_64; do
     -target "${arch}-apple-macos14.0" \
     Sources/*.swift \
     -F vendor/Sparkle -framework Sparkle \
-    -framework AppKit -framework Carbon -framework QuickLookThumbnailing -framework ServiceManagement \
+    -framework AppKit -framework AVFoundation -framework Carbon -framework QuickLookThumbnailing -framework ServiceManagement \
     -Xlinker -rpath -Xlinker @executable_path/../Frameworks \
     -module-cache-path build/obj/cache \
     -o "build/obj/${APP_NAME}-${arch}"

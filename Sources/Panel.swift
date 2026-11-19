@@ -1,4 +1,6 @@
 import AppKit
+import AVFoundation
+import UniformTypeIdentifiers
 
 // MARK: - Window
 
@@ -542,6 +544,10 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
 final class PreviewWindow {
     private let window: NSPanel
     private let imageView = NSImageView()
+    private let playerView = NSView()
+    private let playerLayer = AVPlayerLayer()
+    private var player: AVQueuePlayer?
+    private var looper: AVPlayerLooper?
     private var currentURL: URL?
 
     init() {
@@ -563,20 +569,61 @@ final class PreviewWindow {
         // Autoresizing, so the image's own size can't resize the window.
         imageView.autoresizingMask = [.width, .height]
         box.addSubview(imageView)
+        playerView.wantsLayer = true
+        playerView.layer = playerLayer
+        playerLayer.videoGravity = .resizeAspect
+        playerView.autoresizingMask = [.width, .height]
+        box.addSubview(playerView)
         window.contentView = box
     }
 
-    /// Shows an enlarged image centred on the hovered thumbnail, clamped to the screen.
+    /// Shows an enlarged image, or a muted looping video, centred on the
+    /// hovered thumbnail and clamped to the screen.
     func show(url: URL, around rect: NSRect, parent: NSWindow) {
+        currentURL = url
+        if let type = UTType(filenameExtension: url.pathExtension), type.conforms(to: .movie) {
+            showVideo(url: url, around: rect, parent: parent)
+            return
+        }
         let image = NSImage(contentsOf: url) ?? NSWorkspace.shared.icon(forFile: url.path)
         guard image.size.width > 0, image.size.height > 0 else { return }
-        currentURL = url
+        stopVideo()
+        imageView.image = image
+        imageView.isHidden = false
+        present(contentSize: image.size, around: rect, parent: parent)
+    }
+
+    private func showVideo(url: URL, around rect: NSRect, parent: NSWindow) {
+        let asset = AVURLAsset(url: url)
+        Task { @MainActor [weak self] in
+            // The track's size, turned the way it plays (a recording can be rotated).
+            guard let track = try? await asset.loadTracks(withMediaType: .video).first,
+                  let (natural, transform) = try? await track.load(.naturalSize, .preferredTransform),
+                  let self, self.currentURL == url else { return }
+            let size = natural.applying(transform)
+            let content = NSSize(width: abs(size.width), height: abs(size.height))
+            guard content.width > 0, content.height > 0 else { return }
+
+            self.stopVideo()
+            let player = AVQueuePlayer()
+            player.isMuted = true
+            self.looper = AVPlayerLooper(player: player, templateItem: AVPlayerItem(asset: asset))
+            self.player = player
+            self.playerLayer.player = player
+            self.imageView.isHidden = true
+            self.playerView.isHidden = false
+            self.present(contentSize: content, around: rect, parent: parent)
+            player.play()
+        }
+    }
+
+    private func present(contentSize: NSSize, around rect: NSRect, parent: NSWindow) {
         let screen = parent.screen ?? NSScreen.main
         let vf = screen?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
 
         let maxSide = min(640, vf.width * 0.6, vf.height * 0.7)
-        let s = min(maxSide / image.size.width, maxSide / image.size.height, 1.0 * 2)
-        var size = NSSize(width: image.size.width * s, height: image.size.height * s)
+        let s = min(maxSide / contentSize.width, maxSide / contentSize.height, 1.0 * 2)
+        var size = NSSize(width: contentSize.width * s, height: contentSize.height * s)
         size.width = max(size.width, rect.width)
         size.height = max(size.height, rect.height)
 
@@ -584,7 +631,6 @@ final class PreviewWindow {
         origin.x = min(max(origin.x, vf.minX + 8), vf.maxX - size.width - 8)
         origin.y = min(max(origin.y, vf.minY + 8), vf.maxY - size.height - 8)
 
-        imageView.image = image
         window.setFrame(NSRect(origin: origin, size: size), display: true)
         window.alphaValue = 0
         window.orderFront(nil)
@@ -594,8 +640,18 @@ final class PreviewWindow {
         }
     }
 
+    private func stopVideo() {
+        player?.pause()
+        looper?.disableLooping()
+        looper = nil
+        player = nil
+        playerLayer.player = nil
+        playerView.isHidden = true
+    }
+
     func hide() {
         currentURL = nil
+        stopVideo()
         window.orderOut(nil)
     }
 }
