@@ -71,7 +71,10 @@ final class ShotStore {
     /// the file at Retina resolution; movies fall back to Quick Look.
     func thumbnail(for url: URL, size: CGSize, completion: @escaping (NSImage?) -> Void) {
         // Cache per size: the grid and the corner thumbnail ask for different sizes.
-        let key = "\(url.path)|\(Int(size.width))x\(Int(size.height))" as NSString
+        // The modification date too, so a shot edited in Markup gets a fresh one.
+        let modified = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?
+            .contentModificationDate?.timeIntervalSince1970 ?? 0
+        let key = "\(url.path)|\(modified)|\(Int(size.width))x\(Int(size.height))" as NSString
         if let img = thumbs.object(forKey: key) { completion(img); return }
 
         // Use the sharpest screen attached, so it's crisp on Retina and external displays.
