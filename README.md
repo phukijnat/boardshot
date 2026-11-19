@@ -133,3 +133,5 @@ If Boardshot makes sharing screenshots feel instant, a ⭐ on the repo helps oth
 ## License
 
 Boardshot is free and open source under the [MIT License](LICENSE). © 2026 phukijnat
+
+You're welcome to fork, change and share the code under that license. If you publish your own build, including on the Mac App Store, please give it a different name and icon so people can tell it apart. The name Boardshot and its icon are for the official app, which is only released from [this repo's Releases page](https://github.com/phukijnat/boardshot/releases).

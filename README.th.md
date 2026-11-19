@@ -131,3 +131,5 @@ for k in location location-screenshot location-screenrecording target target-scr
 ## License
 
 Boardshot เป็นซอฟต์แวร์ฟรีและโอเพนซอร์ส ภายใต้ [MIT License](LICENSE) © 2026 phukijnat
+
+ใครจะ fork แก้ไข หรือแจกต่อก็ได้ตามเงื่อนไขของ MIT แต่ถ้าเผยแพร่เวอร์ชันของตัวเอง รวมถึงลงใน Mac App Store ขอให้ใช้ชื่อและไอคอนอื่น คนจะได้แยกออกว่าตัวไหนเป็นตัวจริง ชื่อ Boardshot และไอคอนสงวนไว้สำหรับแอปทางการ ซึ่งปล่อยที่ [หน้า Releases ของ repo นี้](https://github.com/phukijnat/boardshot/releases) ที่เดียวเท่านั้น
