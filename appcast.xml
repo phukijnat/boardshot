@@ -4,6 +4,19 @@
     <title>Boardshot</title>
     <!-- ITEMS -->
     <item>
+      <title>0.3.3</title>
+      <pubDate>Thu, 19 Nov 2026 09:07:00 +0000</pubDate>
+      <sparkle:version>303</sparkle:version>
+      <sparkle:shortVersionString>0.3.3</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul>
+<li>Quitting Boardshot now puts all your screenshot settings back, not only the thumbnail: screenshots taken while the app is closed go to your old folder (the Desktop by default), so you can tell Boardshot isn't running. Opening it again switches back to ~/Pictures/Boardshot. This also works if Boardshot crashes or is force quit.</li>
+<li>Fixed: hovering a screen recording showed only a file icon. The large preview now plays the video, muted and on a loop.</li>
+</ul>
+]]></description>
+      <enclosure url="https://github.com/phukijnat/boardshot/releases/download/v0.3.3/Boardshot-0.3.3.dmg" length="1570592" type="application/octet-stream" sparkle:edSignature="bTVXmZVhJ3dUhUATb9rWk1BBGl1T5Acvkaovt73AYklAMmhWOeqpYzG0IZaaxBB9AYn5z9ve7rryN9t1znnlDg=="/>
+    </item>
+    <item>
       <title>0.3.2</title>
       <pubDate>Thu, 19 Nov 2026 06:38:59 +0000</pubDate>
       <sparkle:version>302</sparkle:version>

@@ -4,7 +4,7 @@
 
 ## 0.3.3
 
-- Quitting Boardshot now puts all your screenshot settings back, not only the thumbnail: screenshots taken while the app is closed go to your old folder (the Desktop by default), so you can tell Boardshot isn't running. Opening it again switches back to `~/Pictures/Boardshot`. This also works if Boardshot crashes or is force quit.
+- Quitting Boardshot now puts all your screenshot settings back, not only the thumbnail: screenshots taken while the app is closed go to your old folder (the Desktop by default), so you can tell Boardshot isn't running. Opening it again switches back to ~/Pictures/Boardshot. This also works if Boardshot crashes or is force quit.
 - Fixed: hovering a screen recording showed only a file icon. The large preview now plays the video, muted and on a loop.
 
 ## 0.3.2
