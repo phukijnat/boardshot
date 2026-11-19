@@ -1,11 +1,11 @@
 #!/bin/zsh
 # Builds the app into ./build (universal: Apple Silicon + Intel).
-#   ./build.sh            build only
-#   ./build.sh --install  also copy to /Applications and relaunch
-#   ./build.sh --dmg      also make dist/<Name>-<version>.dmg
+#   tools/build.sh            build only
+#   tools/build.sh --install  also copy to /Applications and relaunch
+#   tools/build.sh --dmg      also make dist/<Name>-<version>.dmg
 set -euo pipefail
-cd "$(dirname "$0")"
-source ./config.sh
+cd "$(dirname "$0")/.."
+source tools/config.sh
 VERSION="${BUILD_VERSION:-$VERSION}"   # release.sh --local overrides this
 ./tools/fetch_sparkle.sh
 
@@ -16,7 +16,7 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" "$APP/Contents/Framewor
 
 # Info.plist: template + values from config.sh
 PLIST="$APP/Contents/Info.plist"
-cp Info.plist "$PLIST"
+cp Resources/Info.plist "$PLIST"
 set_key() { /usr/libexec/PlistBuddy -c "Set :$1 $2" "$PLIST" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :$1 string $2" "$PLIST"; }
 set_key CFBundleName "$APP_NAME"
 set_key CFBundleDisplayName "$APP_NAME"

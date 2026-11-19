@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="Resources/AppIcon-preview.png" width="128" alt="ไอคอน Boardshot">
+  <img src="../../Resources/AppIcon-preview.png" width="128" alt="ไอคอน Boardshot">
   <h1>Boardshot</h1>
   <p><strong>screenshot ล่าสุด เรียกใช้ได้ด้วยคีย์ลัดเดียว</strong></p>
 
@@ -7,12 +7,12 @@
 
   [![Latest version](https://img.shields.io/github/v/release/phukijnat/boardshot?include_prereleases&label=version)](https://github.com/phukijnat/boardshot/releases)
   ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-blue)
-  [![License: MIT](https://img.shields.io/github/license/phukijnat/boardshot)](LICENSE)
+  [![License: MIT](https://img.shields.io/github/license/phukijnat/boardshot)](../../LICENSE)
 
-  [English](README.md) · ภาษาไทย
+  [English](../../README.md) · ภาษาไทย
 </div>
 
-<p align="center"><img src="docs/demo.gif" width="800" alt="ถ่ายจอ กด Shift-Command-Space แล้วลากภาพไปวางในแชต"></p>
+<p align="center"><img src="../demo.gif" width="800" alt="ถ่ายจอ กด Shift-Command-Space แล้วลากภาพไปวางในแชต"></p>
 
 ถ่ายจอแบบที่ทำอยู่ทุกวัน กด `⇧⌘Space` แล้วลากภาพไปวางใน Slack, Figma, แชต หรือ issue ได้เลย ไม่ต้องเปิด Finder หาไฟล์ Boardshot อยู่บนแถบเมนู เก็บทุกภาพไว้ในโฟลเดอร์เดียว และได้ Desktop ที่สะอาดเป็นของแถม
 
@@ -40,7 +40,7 @@
 ### ถ้าขึ้นว่า "Apple could not verify Boardshot…"
 Boardshot ยังไม่ได้ผ่านการตรวจ (notarize) ของ Apple เพราะต้องสมัครบัญชีนักพัฒนาแบบเสียเงิน macOS เลยบล็อกตอนเปิดครั้งแรก ให้กด **Done** อย่ากด Move to Trash:
 
-<img src="docs/first-launch-done.png" width="260" alt="หน้าต่าง Boardshot Not Opened วงปุ่ม Done ไว้">
+<img src="../first-launch-done.png" width="260" alt="หน้าต่าง Boardshot Not Opened วงปุ่ม Done ไว้">
 
 จากนั้นทำแค่ครั้งเดียว:
 
@@ -119,7 +119,7 @@ Boardshot เขียนค่าเหล่านี้ใน `com.apple.scre
 Boardshot จำค่านั้นไว้ และคืนให้เมื่อเอาติ๊ก "เก็บ screenshot ไว้ที่ Boardshot" ออก
 
 **Boardshot ส่งอะไรออกอินเทอร์เน็ตไหม?**
-มีแค่การเช็กอัปเดต ซึ่งอ่านไฟล์ [`appcast.xml`](appcast.xml) จาก repo นี้ ปิดการเช็กอัตโนมัติได้ในหน้าตั้งค่า
+มีแค่การเช็กอัปเดต ซึ่งอ่านไฟล์ [`appcast.xml`](../../appcast.xml) จาก repo นี้ ปิดการเช็กอัตโนมัติได้ในหน้าตั้งค่า
 
 **ทำไมยังไม่ผ่าน notarize?**
 ต้องใช้บัญชีนักพัฒนา Apple แบบเสียเงิน แอปนี้เป็นโอเพนซอร์ส [build เองได้](#แจ้งปัญหาและร่วมพัฒนา) (ดูหัวข้อ **Build เอง**)
@@ -149,15 +149,15 @@ for k in location location-screenshot location-screenrecording target target-scr
 ```bash
 git clone https://github.com/phukijnat/boardshot.git
 cd boardshot
-./build.sh
+./tools/build.sh
 open build/Boardshot.app
 ```
 
-ครั้งแรก `build.sh` จะโหลด Sparkle (ระบบอัปเดต) มาไว้ที่ `vendor/` แล้ว build แอปไว้ที่ `build/` ถ้าอยากให้ติดตั้งทับตัวใน Applications เลย ใช้ `./build.sh --install`
+ครั้งแรก `build.sh` จะโหลด Sparkle (ระบบอัปเดต) มาไว้ที่ `vendor/` แล้ว build แอปไว้ที่ `build/` ถ้าอยากให้ติดตั้งทับตัวใน Applications เลย ใช้ `./tools/build.sh --install`
 
 แอปที่ build เองเซ็นแบบ ad hoc ทุกครั้งที่ build ใหม่ macOS อาจถามสิทธิ์ซ้ำ เช่น สิทธิ์เข้าถึง Desktop ตอนนำเข้าภาพ
 
-โครงสร้างโค้ดและวิธีปล่อยเวอร์ชันดูใน [CONTRIBUTING.md](CONTRIBUTING.md)
+โครงสร้างโค้ดและวิธีปล่อยเวอร์ชันดูใน [CONTRIBUTING.md](../../CONTRIBUTING.md)
 
 </details>
 
@@ -169,6 +169,6 @@ open build/Boardshot.app
 
 ## License
 
-Boardshot เป็นซอฟต์แวร์ฟรีและโอเพนซอร์ส ภายใต้ [MIT License](LICENSE) © 2026 phukijnat
+Boardshot เป็นซอฟต์แวร์ฟรีและโอเพนซอร์ส ภายใต้ [MIT License](../../LICENSE) © 2026 phukijnat
 
 ใครจะ fork แก้ไข หรือแจกต่อก็ได้ตามเงื่อนไขของ MIT แต่ถ้าเผยแพร่เวอร์ชันของตัวเอง รวมถึงลงใน Mac App Store ขอให้ใช้ชื่อและไอคอนอื่น คนจะได้แยกออกว่าตัวไหนเป็นตัวจริง ชื่อ Boardshot และไอคอนสงวนไว้สำหรับแอปทางการ ซึ่งปล่อยที่ [หน้า Releases ของ repo นี้](https://github.com/phukijnat/boardshot/releases) ที่เดียวเท่านั้น

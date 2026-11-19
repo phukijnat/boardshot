@@ -9,7 +9,7 @@
   ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-blue)
   [![License: MIT](https://img.shields.io/github/license/phukijnat/boardshot)](LICENSE)
 
-  English · [ภาษาไทย](README.th.md)
+  English · [ภาษาไทย](docs/i18n/README.th.md)
 </div>
 
 <p align="center"><img src="docs/demo.gif" width="800" alt="Take a screenshot, press Shift-Command-Space, drag it into a chat"></p>
@@ -149,11 +149,11 @@ Needs Xcode Command Line Tools (`xcode-select --install`). Xcode itself is optio
 ```bash
 git clone https://github.com/phukijnat/boardshot.git
 cd boardshot
-./build.sh
+./tools/build.sh
 open build/Boardshot.app
 ```
 
-`build.sh` downloads Sparkle (the update framework) into `vendor/` on first run and builds a universal app into `build/`. Use `./build.sh --install` to replace the copy in Applications instead.
+`build.sh` downloads Sparkle (the update framework) into `vendor/` on first run and builds a universal app into `build/`. Use `./tools/build.sh --install` to replace the copy in Applications instead.
 
 Your own builds are signed ad hoc, so macOS may ask again for permissions, such as access to the Desktop when importing, after each rebuild.
 

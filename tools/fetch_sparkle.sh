@@ -2,7 +2,7 @@
 # Downloads the pinned Sparkle release into vendor/Sparkle and checks its hash.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-source ./config.sh
+source tools/config.sh
 
 if [[ -f vendor/Sparkle/.version && "$(cat vendor/Sparkle/.version)" == "$SPARKLE_VERSION" ]]; then
   exit 0

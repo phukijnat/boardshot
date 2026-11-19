@@ -2,27 +2,27 @@
 # Makes a release: sets the version, builds the .dmg, signs it for Sparkle,
 # and adds it to appcast.xml. Nothing is uploaded; the script prints what to do next.
 #
-#   ./release.sh 0.2.0           real release (edits config.sh and appcast.xml)
-#   ./release.sh 0.2.0 --local   test build for http://localhost:8000 (writes only to build/local-feed)
+#   tools/release.sh 0.2.0           real release (edits config.sh and appcast.xml)
+#   tools/release.sh 0.2.0 --local   test build for http://localhost:8000 (writes only to build/local-feed)
 #
 # Release notes: the "## <version>" section of CHANGELOG.md, if there is one.
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 
 NEW="${1:-}"
 MODE="${2:-}"
 if [[ ! "$NEW" =~ '^[0-9]+\.[0-9]+\.[0-9]+$' ]]; then
-  echo "usage: ./release.sh <major.minor.patch> [--local]" >&2
+  echo "usage: tools/release.sh <major.minor.patch> [--local]" >&2
   exit 1
 fi
-source ./config.sh
+source tools/config.sh
 
 if [[ "$MODE" == "--local" ]]; then
   FEED_DIR=build/local-feed
   BASE_URL="http://localhost:8000"
   mkdir -p "$FEED_DIR"
   export FEED_URL="$BASE_URL/appcast.xml" BUILD_VERSION="$NEW"
-  ./build.sh --dmg
+  tools/build.sh --dmg
   APPCAST="$FEED_DIR/appcast.xml"
   DOWNLOAD_URL="$BASE_URL/${APP_NAME}-${NEW}.dmg"
 else
@@ -30,8 +30,8 @@ else
     echo "Commit or stash your changes first, so the release matches a commit." >&2
     exit 1
   fi
-  sed -i '' "s/^VERSION=\".*\"/VERSION=\"${NEW}\"/" config.sh
-  ./build.sh --dmg
+  sed -i '' "s/^VERSION=\".*\"/VERSION=\"${NEW}\"/" tools/config.sh
+  tools/build.sh --dmg
   APPCAST=appcast.xml
   DOWNLOAD_URL="https://github.com/${GITHUB_REPO}/releases/download/v${NEW}/${APP_NAME}-${NEW}.dmg"
 fi

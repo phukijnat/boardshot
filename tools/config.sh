@@ -9,7 +9,7 @@ GITHUB_REPO="phukijnat/boardshot"
 VERSION="0.4.0"
 
 # Where the app looks for updates. Can be overridden for local testing:
-#   FEED_URL=http://localhost:8000/appcast.xml ./build.sh
+#   FEED_URL=http://localhost:8000/appcast.xml tools/build.sh
 FEED_URL="${FEED_URL:-https://raw.githubusercontent.com/${GITHUB_REPO}/main/appcast.xml}"
 
 # Sparkle (update framework). tools/fetch_sparkle.sh downloads it into vendor/.
