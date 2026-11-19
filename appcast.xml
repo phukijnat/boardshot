@@ -4,6 +4,20 @@
     <title>Boardshot</title>
     <!-- ITEMS -->
     <item>
+      <title>0.4.0</title>
+      <pubDate>Thu, 19 Nov 2026 13:09:55 +0000</pubDate>
+      <sparkle:version>400</sparkle:version>
+      <sparkle:shortVersionString>0.4.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul>
+<li>The corner thumbnail now does what the Mac's does. Click a screenshot to mark it up in the Mac's Markup (Done saves over the file), or click a screen recording to trim it.</li>
+<li>Right-click the corner thumbnail for the Mac's usual choices: save a copy to the Desktop, Documents or clipboard, open in Mail, Messages, Preview or Photos, show in Finder, or delete.</li>
+<li>Screenshots your Mac left in your old screenshot folder (usually the Desktop), for example ones taken while Boardshot was closed, can now be brought in: the Boardshot window shows "Import N from Desktop" when there are any, and the welcome window offers it too. Only files your Mac made by capturing the screen are moved.</li>
+</ul>
+]]></description>
+      <enclosure url="https://github.com/phukijnat/boardshot/releases/download/v0.4.0/Boardshot-0.4.0.dmg" length="1663932" type="application/octet-stream" sparkle:edSignature="WaeNfRFWjQxCH25J/fc+mLaYCtuPO10claq5NjhwWPN3pkz4BlIpje9Y+K58qL/pwsIKJnpRGHpKoYyNrDeXAQ=="/>
+    </item>
+    <item>
       <title>0.3.3</title>
       <pubDate>Thu, 19 Nov 2026 09:07:00 +0000</pubDate>
       <sparkle:version>303</sparkle:version>
