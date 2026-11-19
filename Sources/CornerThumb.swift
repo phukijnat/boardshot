@@ -12,6 +12,8 @@ final class CornerThumb: NSObject, NSDraggingSource {
     var onShowInBoardshot: ((URL) -> Void)?
     /// Opens the shot in Markup (right-click menu).
     var onMarkup: ((URL) -> Void)?
+    /// Opens a recording in the trim window (right-click menu).
+    var onTrim: ((URL) -> Void)?
     /// Moves the shot to the Trash (right-click menu).
     var onTrash: ((URL) -> Void)?
 
@@ -150,6 +152,12 @@ final class CornerThumb: NSObject, NSDraggingSource {
             add("Markup") { [weak self] in
                 self?.hide()
                 self?.onMarkup?(url)
+            }
+        }
+        if VideoTrim.canTrim(url) {
+            add(tr("ตัดวิดีโอ", "Trim")) { [weak self] in
+                self?.hide()
+                self?.onTrim?(url)
             }
         }
         add(tr("แสดงใน Finder", "Show in Finder")) { [weak self] in
