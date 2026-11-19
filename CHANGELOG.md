@@ -2,6 +2,12 @@
 
 `release.sh` turns the bullet list under each version into the release notes users see in the update window.
 
+## 0.4.0
+
+- The corner thumbnail now does what the Mac's does. Click a screenshot to mark it up in the Mac's Markup (Done saves over the file), or click a screen recording to trim it.
+- Right-click the corner thumbnail for the Mac's usual choices: save a copy to the Desktop, Documents or clipboard, open in Mail, Messages, Preview or Photos, show in Finder, or delete.
+- Screenshots your Mac left in your old screenshot folder (usually the Desktop), for example ones taken while Boardshot was closed, can now be brought in: the Boardshot window shows "Import N from Desktop" when there are any, and the welcome window offers it too. Only files your Mac made by capturing the screen are moved.
+
 ## 0.3.3
 
 - Quitting Boardshot now puts all your screenshot settings back, not only the thumbnail: screenshots taken while the app is closed go to your old folder (the Desktop by default), so you can tell Boardshot isn't running. Opening it again switches back to ~/Pictures/Boardshot. This also works if Boardshot crashes or is force quit.
