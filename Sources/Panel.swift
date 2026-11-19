@@ -148,7 +148,7 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
     private var emptyBox: NSStackView!
     private let hintLabel = NSTextField(labelWithString: "")
     private var folderBtn: NSButton!
-    private var moreBtn: NSButton!
+    private var settingsBtn: NSButton!
     private var clearBtn: NSButton!
     private var header: NSView!
     private let confirmBar = NSStackView()
@@ -252,14 +252,14 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
         folderBtn = NSButton(image: NSImage(systemSymbolName: "folder", accessibilityDescription: "Folder")!,
                              target: self, action: #selector(openFolder))
         folderBtn.isBordered = false
-        moreBtn = NSButton(image: NSImage(systemSymbolName: "ellipsis.circle", accessibilityDescription: "More")!,
-                           target: self, action: #selector(showMoreMenu(_:)))
-        moreBtn.isBordered = false
+        settingsBtn = NSButton(image: NSImage(systemSymbolName: "gearshape", accessibilityDescription: "Settings")!,
+                               target: self, action: #selector(menuShowPrefs))
+        settingsBtn.isBordered = false
         clearBtn = NSButton(image: NSImage(systemSymbolName: "trash", accessibilityDescription: "Clear all")!,
                             target: self, action: #selector(wipeAllShots))
         clearBtn.isBordered = false
 
-        let header = DragHeader(views: [title, countLabel, NSView(), hint, clearBtn, folderBtn, moreBtn])
+        let header = DragHeader(views: [title, countLabel, NSView(), hint, clearBtn, folderBtn, settingsBtn])
         header.orientation = .horizontal
         header.spacing = 8
         header.edgeInsets = NSEdgeInsets(top: 0, left: 16, bottom: 0, right: 12)
@@ -383,7 +383,7 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
         enableBtn.title = tr("ให้ \(AppInfo.name) เก็บภาพ", "Keep Screenshots in \(AppInfo.name)")
         enableBtn.isHidden = Prefs.manageScreenshots
         folderBtn.toolTip = tr("เปิดโฟลเดอร์ใน Finder", "Show folder in Finder")
-        moreBtn.toolTip = tr("ตั้งค่าและอื่นๆ", "Settings and more")
+        settingsBtn.toolTip = tr("ตั้งค่า (⌘,)", "Settings (⌘,)")
         clearBtn.toolTip = tr("ลบรูปทั้งหมด", "Delete all screenshots")
         clearBtn.isEnabled = !store.shots.isEmpty
     }
@@ -415,19 +415,6 @@ final class PanelController: NSObject, NSCollectionViewDataSource, NSCollectionV
         cancelWipe()
         grid.deselectAll(nil)
         store.trash(urls)
-    }
-
-    // Selector names avoid "settings"/"preferences": macOS 26 would add a gear icon.
-    @objc private func showMoreMenu(_ sender: NSButton) {
-        let menu = NSMenu()
-        let s = NSMenuItem(title: tr("ตั้งค่า…", "Settings…"), action: #selector(menuShowPrefs), keyEquivalent: ",")
-        let f = NSMenuItem(title: tr("เปิดโฟลเดอร์ใน Finder", "Show Folder in Finder"), action: #selector(openFolder), keyEquivalent: "")
-        let q = NSMenuItem(title: tr("ออก", "Quit"), action: #selector(menuQuit), keyEquivalent: "q")
-        for item in [s, f] { item.target = self; menu.addItem(item) }
-        menu.addItem(.separator())
-        q.target = self
-        menu.addItem(q)
-        menu.popUp(positioning: nil, at: NSPoint(x: 0, y: sender.bounds.maxY + 4), in: sender)
     }
 
     @objc private func menuShowPrefs() { hide(); onShowSettings?() }

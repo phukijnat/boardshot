@@ -65,7 +65,7 @@ Updates installed from inside the app don't need this step again.
 
 ## Settings
 
-Open from the menu bar icon → **Settings…**, the **⋯** button in the panel, or `⌘,` while the panel is open.
+Open from the menu bar icon → **Settings…**, the gear button in the panel, or `⌘,` while the panel is open.
 
 - Shortcut to open the panel (must include `⌘`, `⌃` or `⌥`)
 - Language: Thai / English

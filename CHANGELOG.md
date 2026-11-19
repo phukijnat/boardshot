@@ -2,6 +2,10 @@
 
 `release.sh` turns the bullet list under each version into the release notes users see in the update window.
 
+## Unreleased
+
+- The gear button in the Boardshot window opens Settings straight away, instead of a menu that repeated the folder button and Quit (still on ⌘Q and in Settings).
+
 ## 0.3.1
 
 - Fixed: if your Mac was set to save screenshots to the clipboard, Preview or another app (⇧⌘5 → Options), they never reached Boardshot and the window stayed empty. Boardshot now saves them as files, and puts your choice back when you untick “Keep screenshots in Boardshot”.

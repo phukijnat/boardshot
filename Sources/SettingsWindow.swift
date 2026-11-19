@@ -188,8 +188,8 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
                                target: self, action: #selector(menuBarChanged(_:)))
         menuBar.state = Prefs.showMenuBarIcon ? .on : .off
         let menuBarNote = NSTextField(wrappingLabelWithString: tr(
-            "ถ้าซ่อน เปิดตั้งค่าได้จากปุ่ม ⋯ ในหน้าต่าง \(AppInfo.name) หรือกด ⌘,",
-            "If hidden, open Settings from the ⋯ button in the \(AppInfo.name) window, or press ⌘,"))
+            "ถ้าซ่อน เปิดตั้งค่าได้จากปุ่มเฟือง ⚙ ในหน้าต่าง \(AppInfo.name) หรือกด ⌘,",
+            "If hidden, open Settings from the gear button in the \(AppInfo.name) window, or press ⌘,"))
         menuBarNote.font = .systemFont(ofSize: 11)
         menuBarNote.textColor = .secondaryLabelColor
         menuBarNote.preferredMaxLayoutWidth = 320
