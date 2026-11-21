@@ -121,8 +121,25 @@ final class GridView: NSCollectionView {
         }
     }
 
+    /// Item a plain or ⌘-click last landed on; ⇧-click selects from here.
+    private var anchor: IndexPath?
+
     override func mouseDown(with event: NSEvent) {
+        let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        let hit = indexPathForItem(at: convert(event.locationInWindow, from: nil))
+        // NSCollectionView treats ⇧-click like ⌘-click (toggle one item),
+        // so select the whole run from the anchor to the clicked item instead.
+        if flags.contains(.shift), !flags.contains(.command), let hit {
+            let count = numberOfSections > 0 ? numberOfItems(inSection: 0) : 0
+            let from = anchor.flatMap { $0.item < count ? $0.item : nil }
+                ?? selectionIndexPaths.min()?.item ?? hit.item
+            let range = min(from, hit.item)...max(from, hit.item)
+            selectionIndexPaths = Set(range.map { IndexPath(item: $0, section: 0) })
+            window?.makeFirstResponder(self)
+            return
+        }
         super.mouseDown(with: event)
+        if let hit { anchor = hit }
         if event.clickCount == 2 { onOpen?() }
     }
 
