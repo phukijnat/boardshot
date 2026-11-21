@@ -2,6 +2,10 @@
 
 `release.sh` turns the bullet list under each version into the release notes users see in the update window.
 
+## 0.4.1
+
+- Fixed: ⇧-clicking a screenshot in the Boardshot window added just that one, like ⌘-click. It now selects every screenshot from the one you last clicked to the one you ⇧-click, like in Finder.
+
 ## 0.4.0
 
 - The corner thumbnail now does what the Mac's does. Click a screenshot to mark it up in the Mac's Markup (Done saves over the file), or click a screen recording to trim it.
